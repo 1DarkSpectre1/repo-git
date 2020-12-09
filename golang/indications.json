@@ -1,0 +1,127 @@
+[
+	{
+		"indicator": "thermometer1",
+		"value": 90,
+		"date": "2020-01-01T12:10:00Z"
+	},
+	{
+		"indicator": "thermometer1",
+		"value": 89,
+		"date": "2020-01-01T12:20:00Z"
+	},
+	{
+		"indicator": "thermometer1",
+		"value": 84,
+		"date": "2020-01-01T12:30:00Z"
+	},
+	{
+		"indicator": "thermometer1",
+		"value": 83,
+		"date": "2020-01-01T12:40:00Z"
+	},
+	{
+		"indicator": "thermometer1",
+		"value": 79,
+		"date": "2020-01-01T12:50:00Z"
+	},
+	{
+		"indicator": "thermometer1",
+		"value": 82,
+		"date": "2020-01-01T13:00:00Z"
+	},
+	{
+		"indicator": "thermometer2",
+		"value": 61,
+		"date": "2020-01-01T12:10:00Z"
+	},
+	{
+		"indicator": "thermometer2",
+		"value": 65,
+		"date": "2020-01-01T12:20:00Z"
+	},
+	{
+		"indicator": "thermometer2",
+		"value": 67,
+		"date": "2020-01-01T12:30:00Z"
+	},
+	{
+		"indicator": "thermometer2",
+		"value": 68,
+		"date": "2020-01-01T12:40:00Z"
+	},
+	{
+		"indicator": "thermometer2",
+		"value": 68,
+		"date": "2020-01-01T12:50:00Z"
+	},
+	{
+		"indicator": "thermometer2",
+		"value": 68,
+		"date": "2020-01-01T13:00:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 87,
+		"date": "2020-01-01T12:00:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 86,
+		"date": "2020-01-01T12:05:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 86,
+		"date": "2020-01-01T12:10:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 86,
+		"date": "2020-01-01T12:15:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 85,
+		"date": "2020-01-01T12:20:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 85,
+		"date": "2020-01-01T12:25:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 84,
+		"date": "2020-01-01T12:30:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 85,
+		"date": "2020-01-01T12:35:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 84,
+		"date": "2020-01-01T12:40:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 83,
+		"date": "2020-01-01T12:45:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 82,
+		"date": "2020-01-01T12:50:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 82,
+		"date": "2020-01-01T12:55:00Z"
+	},
+	{
+		"indicator": "thermometer3",
+		"value": 81,
+		"date": "2020-01-01T13:00:00Z"
+	}
+]
