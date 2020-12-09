@@ -34,9 +34,20 @@ function refresh(data) {
 
 // функция сортировки фильмов по году
 function sortByRating(data) {
-	let sortedData = []
+	let sortedData = [];
+	let sort;
 	sortedData = data;
-	sortedData.sort((prev, next)=> prev.rating -next.rating);
+	
+	for (var i = 0 ; i<sortedData.length ; i++) {
+		for (var j = 1 ; j<sortedData.length ; j++) {
+			if (sortedData[j].rating < sortedData[j-1].rating) {
+				sort = sortedData[j-1];
+				sortedData[j-1] = sortedData[j];
+				sortedData[j] = sort;
+			}
+		}
+	}
+	//sortedData.sort((prev, next)=> prev.rating -next.rating);
 
 	/**
 	 * сортировка data по полю rating
