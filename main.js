@@ -36,8 +36,10 @@ function refresh(data) {
 function sortByRating(data) {
 	let sortedData = [];
 	let sort;
-	sortedData = data;
-	
+
+	sortedData = data.slice();//копируем данные
+
+	//сортировка (попарно сравниваем элементы по полю rating)
 	for (var i = 0 ; i<sortedData.length ; i++) {
 		for (var j = 1 ; j<sortedData.length ; j++) {
 			if (sortedData[j].rating < sortedData[j-1].rating) {
@@ -49,10 +51,7 @@ function sortByRating(data) {
 	}
 	//sortedData.sort((prev, next)=> prev.rating -next.rating);
 
-	/**
-	 * сортировка data по полю rating
-	 * TODO ...
-	 */
+	
 
 	return sortedData
 }
