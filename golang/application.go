@@ -83,14 +83,15 @@ func sortByDate(data []Indication) (err error) {
 	var j,leng,i int
 
 	leng = len(sortedData);//Находим размер
+
 	//сортировка методом попарного сравнения
 	i=0;
 	for  i < leng-1  {
 		j=1;
-	for j < leng-1  {
+	for j < leng-1  {// проход по масиву
 		
-			if( sortedData[j-1].Date.Unix() > sortedData[j].Date.Unix() ){     // числовое представление даты (секунды с 1 января 1970 года). поле для сортировки
-				sortedData[j-1],sortedData[j] = sortedData[j],sortedData[j-1]	
+			if( sortedData[j-1].Date.Unix() > sortedData[j].Date.Unix() ){     // сранение двух созедних значений (сраниваем по дате)
+				sortedData[j-1],sortedData[j] = sortedData[j],sortedData[j-1]	//значени меняются местами
 			}
 			j++
 		}
