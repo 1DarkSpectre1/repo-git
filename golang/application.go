@@ -1,6 +1,7 @@
 package main
 
 import (
+	//"sort"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 	"log"
 	"os"
 	"time"
+	
 )
 
 func main() {
@@ -26,7 +28,7 @@ func main() {
 		log.Printf("ERROR os.Open, %s\n", err)
 		return
 	}
-
+	err= nil
 	// преобразование в срез
 	data, err := parseFile(f)
 	if err != nil {
@@ -76,27 +78,30 @@ func parseFile(file *os.File) (data []Indication, err error) {
 // функция сортировки данных по дате. Заменяет ссылку входного среза на отсортированный срез
 func sortByDate(data []Indication) (err error) {
 
-//	var sortedData []Indication
-//	sortedData = data;
-//	var sort []Indication ;
-//	var j,leng,i int
+	var sortedData []Indication
+	sortedData = data;
+	var j,leng,i int
 
-//	leng = len(sortedData);
-//	i=0;
-//	for  i < leng  {
-//		j=1;
-//		for j < leng  {
-//		
-//			if( sortedData[j-1].Date.Unix() < sortedData[j].Date.Unix() ){// числовое представление даты (секунды с 1 января 1970 года). поле для сортировки
-//			
-//				sort[0]=sortedData[j-1];
-//				sortedData[j-1]=sortedData[j];
-//				sortedData[j]=sort[0];
-//			}
-//		}
-//	}
+	leng = len(sortedData);//Находим размер
+	//сортировка методом попарного сравнения
+	i=0;
+	for  i < leng-1  {
+		j=1;
+	for j < leng-1  {
+		
+			if( sortedData[j-1].Date.Unix() > sortedData[j].Date.Unix() ){     // числовое представление даты (секунды с 1 января 1970 года). поле для сортировки
+				sortedData[j-1],sortedData[j] = sortedData[j],sortedData[j-1]	
+			}
+			j++
+		}
+		i++
+	}
 
-//	data = sortedData
+
+//	sort.SliceStable(data, func(i,j int) bool{
+//		return data[i].Date.Unix() < data[j].Date.Unix()
+//	})
+
 	return 
 }
 
@@ -108,9 +113,12 @@ func print(data []Indication) {
 
 	for _, i := range data {
 		res = fmt.Sprintf("%s", res)
-		res = fmt.Sprintf("value: %v", i.Value) // поле "значение" показания прибора
-		// TODO ...
-		res = fmt.Sprintf("\n")
+		res += fmt.Sprintf("value: %v", i.Value)// поле "значение" показания прибора
+		res += fmt.Sprintf("   ")
+		res += fmt.Sprintf("indicator: %v", i.Indicator)// поле "Индикатор" прибора
+		res += fmt.Sprintf("   ")
+		res += fmt.Sprintf("Date: %v", i.Date)// поле "Дата" записи данных
+		res += fmt.Sprintf("\n")
 	}
 
 	log.Printf(res)
