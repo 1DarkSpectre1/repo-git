@@ -56,18 +56,14 @@ function changeVol(id,data1,data2) {// уменьшение количества
 				data2[data2.length]=Object.assign({},data1[i])//копируем элемент
 				data2[data2.length-1].vol=1;
 			}
-		}
-	}
-
-	for (let i = 0; i < data1.length; i++) {
-
-		if (data1[i].id== id) {
 			data1[i].vol--;			//уменьшаем количство товара
 			if (data1[i].vol==0) {	//проверяем есть ли данный товар
 				 data1.splice(i,1);	//если его нет то удаляем его из списка
 			}
 		}
 	}
+
+	
 }
 
 
