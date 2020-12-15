@@ -11,7 +11,7 @@ var basketdata = [];
 
 var basketsummdata={id:'summ',title:"Стоимость товара",vol:0}
 
-function summ(data) {
+function summ(data) {//нахождение общей стоимости товара в data 
 	summbs=0;
 	data.forEach(item=>{
 		summbs+=(item.vol*item.cost);
@@ -19,7 +19,24 @@ function summ(data) {
 	return summbs;
 }
 
-function stbs(id,data1,data2) {
+function refresh() {// обновление данных
+    		
+    		$$("basket").clearAll();
+    		$$("storage").clearAll();
+            $$("basketsumm").clearAll();
+
+    		$$("basket").define("data", basketdata);
+    		$$("storage").define("data", storagedata);
+
+    		if (basketdata.length>0) {basketsummdata.vol=summ(basketdata)};
+    		$$("basketsumm").define("data", basketsummdata);
+
+			$$("basket").refresh();
+			$$("storage").refresh();
+			$$("basketsumm").refresh();
+    	}
+
+function stbs(id,data1,data2) {// уменьшение количества товара в data1 с номером id и его увелечение в data2
 	ind=true
 	//добавление к количеству товара и проверка есть ли такой товар в корзине
 	for (var i = 0; i < data2.length; i++) {
