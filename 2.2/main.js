@@ -23,15 +23,15 @@ function summ(data) {//нахождение общей стоимости тов
 }
 
 function refresh() {// обновление данных
-    		
+    		//очистка 
     		$$("basket").clearAll();
     		$$("storage").clearAll();
             $$("basketsumm").clearAll();
-
+            //заполнение новыми данными
     		$$("basket").define("data", basketdata);
     		$$("storage").define("data", storagedata);
 
-    		if (basketdata.length>0) {basketsummdata.vol=summ(basketdata)};
+    		if (basketdata.length>0) {basketsummdata.vol=summ(basketdata)};//проверка на пустоту
     		$$("basketsumm").define("data", basketsummdata);
 
 			$$("basket").refresh();
@@ -40,9 +40,8 @@ function refresh() {// обновление данных
 			
     	}
 
-function stbs(id,data1,data2) {// уменьшение количества товара в data1 с номером id и его увелечение в data2
+function changeVol(id,data1,data2) {// уменьшение количества товара в data1 с номером id и его увелечение в data2
 	let ind=true;
-	let elemi;
 	//добавление к количеству товара и проверка есть ли такой товар в корзине
 	for (let i = 0; i < data2.length; i++) {
 		if (data2[i].id == id) {
@@ -53,7 +52,7 @@ function stbs(id,data1,data2) {// уменьшение количества то
 
 	for (let i = 0; i < data1.length; i++) {
 		if (data1[i].id== id) {
-			if (ind) {
+			if (ind) {//проверка есть ли товар в корзине, если нет то выполняем код
 				data2[data2.length]=Object.assign({},data1[i])//копируем элемент
 				data2[data2.length-1].vol=1;
 			}
