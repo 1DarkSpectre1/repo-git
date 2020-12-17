@@ -4,7 +4,7 @@ cols:[{
  rows:[{
     cols:[ {height: 30, template:"Склад" },
     { view:"button",value: 'Добавить товар на Склад',
-            click:function(){ 
+            click:function(){ //обработка нажатия на кнопку
                 $$("win").getBody().clear();
                 $$("win").show();
                 $$("win").getBody().focus();
@@ -52,12 +52,12 @@ cols:[{
   ]
 });
 
-webix.ui({
+webix.ui({//модальное окно
             view:"window",
             id:"win",
             width:300,
             position:"center",
             modal:true,
             head:"Добавление товара",
-            body:webix.copy(form)
+            body:webix.copy(form)//добавление формы для окна из файла main.js
         });

@@ -66,14 +66,11 @@ function changeVol(id,data1,data2) {// уменьшение количества
 }
 function addProduct() {
 	let Product=$$("my_form").getValues();
-	let titleProduct=$$("my_form").elements.title.getValue();
-	let volProduct=$$("my_form").elements.vol.getValue();
-	let costProduct=$$("my_form").elements.cost.getValue();
-	let flag=true;
+	let flag=true;//флаг для добавления элемента
 	storagedata.forEach(item=>{
 		if(item.title==Product.title){
 			if (item.cost==Product.cost) {
-				item.vol+=+Product.vol;
+				item.vol+=+Product.vol;//прибавляем количество если товар есть на складе
 				flag=false;
 			}
 			else
@@ -83,12 +80,13 @@ function addProduct() {
 		
 
 	});
+	//если товара нет на складе проверяем есть ли такой товар в корзине 
 	if(flag){
 			basketdata.forEach(item=>{
 				if (item.title==Product.title) {
 					if (item.cost==Product.cost) {
-						storagedata[storagedata.length]=Object.assign({},item)
-						storagedata[storagedata.length-1].vol=Product.vol;
+						storagedata[storagedata.length]=Object.assign({},item)//добавляем элемент на склад 
+						storagedata[storagedata.length-1].vol=Product.vol;//изменяем значение количества на введённое пользователем
 						flag=false;
 					}
 					else
@@ -100,7 +98,7 @@ function addProduct() {
 			storagedata[storagedata.length]=Object.assign({},Product)
 		}
 	}
-var form = {
+var form = { //форма для окна добавления товара
 			view:"form",
 			id:"my_form",
 			borderless:true,
@@ -108,18 +106,18 @@ var form = {
 				{ view:"text", label:'Название', name:"title" },
                 { view:"text", label:'Количество', name:"vol" },
                 { view:"text", label:'Цена', name:"cost" },
-				{ view:"button", value: "Добавить", click:function(){
-					if (this.getParentView().validate()){ //validate form
+				{ view:"button", value: "Добавить", click:function(){//обработка нажатия кнопки добавить
+					if (this.getParentView().validate()){ //проверка формы на правильность данных
                         addProduct();
                         webix.message("Товар добавлен");
-                        this.getTopParentView().hide(); //hide window
+                        this.getTopParentView().hide(); //Закрытваем окно
                         refresh();
                     }
 					else
 						webix.message({ type:"error", text:"Некоректное значение" });
 				}},
-                { view:"button", value: "Отмена", click:function(){
-                        this.getTopParentView().hide(); //hide window
+                { view:"button", value: "Отмена", click:function(){//обработка нажатия кнопки отмена
+                        this.getTopParentView().hide(); //Закрытваем окно
                 }}
 			],
 			rules:{
