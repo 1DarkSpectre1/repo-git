@@ -74,6 +74,10 @@ func main() {
     
     MakeRequest(line,domain,resultpath)//делаем запрос и сохраняем файл
 
-    fmt.Println(i, line)//вывод всех адрессов
+    var l=log.New(os.Stdout,"",log.Ldate|log.Ltime)
+
+    l.Print()
+    fmt.Println(i, line)  //вывод всех адрессов
+    fmt.Println("")
   }
 }
