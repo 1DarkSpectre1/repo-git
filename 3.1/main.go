@@ -12,7 +12,9 @@ import (
     "strings"
 )
 
-func MakeRequest(line string ,domain string, resultpath string) {//get запрос и сохраняем html файл по пути resultpath
+
+
+func MakeRequest(line string ,domain string, result string) {//get запрос и сохраняем html файл по пути resultpath
   resp, err := http.Get(line)
   if err != nil {
     log.Fatalln(err)
@@ -22,12 +24,19 @@ func MakeRequest(line string ,domain string, resultpath string) {//get запр�
   if err != nil {
     log.Fatalln(err)
   }
-
-    err=ioutil.WriteFile(resultpath+domain + ".html", body, 0777)//запись в файл по пути resultpath
+  
+  if result!="" {
+    err = os.MkdirAll(result, 0777)
     if err != nil {
+      log.Fatalln(err)
+    }
+  }
+
+  err=ioutil.WriteFile(result+domain + ".html", body, 0777)//запись в файл по пути resultpath
+  if err != nil {
     // Если произошла ошибка выводим ее в консоль
     fmt.Println(err)
-    }
+  }
 
 }
 
@@ -50,14 +59,16 @@ func readLines (path string) ([]string, error) {
 func main() {
 
   var filepath string
-    flag.StringVar(&filepath, "filepath", "", "a string var")// флаг для пути к файлу
-    var resultpath string
-
-    flag.StringVar(&resultpath, "resultpath", "", "a string var")// флаг для пути к результату
+    flag.StringVar(&filepath, "filepath", "url.txt", "a string var")// флаг для пути к файлу
+  
+  var result string
+    flag.StringVar(&result, "result", "", "a string var")// флаг для пути к результату
+  var logpath string
+  	flag.StringVar(&logpath, "logpath", "", "a string var")// флаг для пути к результату
     flag.Parse()
 
 
-  lines, err := readLines(filepath+"url.txt")
+  lines, err := readLines(filepath)
 
   if err != nil {
     log.Fatalf("readLines: %s", err)
@@ -72,12 +83,12 @@ func main() {
     parts := strings.Split(u.Hostname(), ".")
     domain := parts[len(parts)-2 ]
     
-    MakeRequest(line,domain,resultpath)//делаем запрос и сохраняем файл
-
-    var l=log.New(os.Stdout,"",log.Ldate|log.Ltime)
-
+    MakeRequest(line,domain,result)//делаем запрос и сохраняем файл
+if logpath=="" {
+var l=log.New(os.Stdout,"",log.Ldate|log.Ltime)
     l.Print()
     fmt.Println(i, line)  //вывод всех адрессов
     fmt.Println("")
+}
   }
 }
