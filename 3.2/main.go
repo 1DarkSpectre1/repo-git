@@ -4,6 +4,7 @@ import (
     "flag"
   "bufio"
   "fmt"
+  //"time"
   "log"
   "os"
   "net/http"
@@ -65,6 +66,8 @@ func main() {
   
   var result string
     flag.StringVar(&result, "result", "", "a string var")// флаг для пути к результату
+
+    
   var logpath string
   	flag.StringVar(&logpath, "logpath", "text.log", "a string var")// флаг для пути к логам
     flag.Parse()
@@ -102,10 +105,10 @@ func main() {
     logger.Println("Начало работы с:"+line)
     if result!="" {
       if !(strings.HasSuffix(result, "/")) {
-        MakeRequest(line,domain,result+string("/"))//делаем запрос и сохраняем файл
+       go MakeRequest(line,domain,result+string("/"))//делаем запрос и сохраняем файл
       }
     }else{
-    MakeRequest(line,domain,result)//делаем запрос и сохраняем файл
+    go MakeRequest(line,domain,result)//делаем запрос и сохраняем файл
     }
     logger.Println("Окончена работа с:"+line)
 
@@ -115,4 +118,7 @@ func main() {
     
   }
   logger.Println("********************Конец записи****************************** ")
+
+  var input string
+    fmt.Scanln(&input)
 }
