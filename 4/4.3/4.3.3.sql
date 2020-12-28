@@ -1,0 +1,2 @@
+SELECT t_employees.c_firstname `Имя сотрудника`,t_employees.c_lastname `Фамилия сотрудника`,t_employees.c_midlename `Отчество сотрудника`
+FROM partition.t_employees, WHERE (SELECT min(t_employees.solary) FROM partition.t_employees)=t_employees.c_solary
