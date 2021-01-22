@@ -5,7 +5,7 @@ export default function ToolbarView() {
         padding:3,
         elements: [
             { view: "icon", icon: "mdi mdi-menu", click: function(){
-               $$("$sidebar1").toggle();
+               $$("main-tabbar").toggle();
              }
             },
             { view: "label", label: "Task manager"},

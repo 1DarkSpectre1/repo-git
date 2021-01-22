@@ -19,7 +19,7 @@ export function TaskTabView() {
                     { id: 'sch_hours', header: ['План часы', { content: 'textFilter' }], sort: 'number', },
                     { id: 'fact_hours', header: ['Факт часы', { content: 'textFilter' }], sort: 'number',  },
                 ],
-                data: tasks,
+                data: [],
                 onContext: {},
             },
         ]

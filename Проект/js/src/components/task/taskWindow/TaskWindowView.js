@@ -1,4 +1,4 @@
-import { TASK_WINDOW_TYPE } from './TaskWindow.js';
+import { TASK_WINDOW_TYPE } from './CTaskWindow.js';
 
 // возвращает webix конфигурацию окна для работы с сущностью книги
 export default function TaskWindowView(type) {
@@ -32,7 +32,7 @@ export default function TaskWindowView(type) {
             view: 'form',
             id: 'taskWindowForm',
             elements: [
-               
+                
                 {
                     view: 'text',
                     id: 'taskWindowFormName',
@@ -42,12 +42,13 @@ export default function TaskWindowView(type) {
                     labelWidth: 150,
                 },
                 {
-                    view: 'text',
+                    view: 'richselect',
                     id: 'taskWindowFormEmployee',
                     label: 'Сотрудник',
                     name: 'employee',
                     required: true,
                     labelWidth: 150,
+                    options: employ
                 },
                 {
                     view: 'text',
@@ -62,7 +63,7 @@ export default function TaskWindowView(type) {
                     id: 'taskWindowFormSchHours',
                     label: 'План часы',
                     name: 'sch_hours',
-                    disabled: true,
+                    required: true,
                     labelWidth: 150,
                 },
                 {

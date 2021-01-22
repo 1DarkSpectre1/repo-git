@@ -13,7 +13,7 @@ export function ProgectTabView() {
                 columns: [
                     { id: 'ID', header: ['', { content: 'textFilter' }], hidden: true },
                     { id: 'name', header: ['Описание', { content: 'textFilter' }], sort: 'string', fillspace: true, },
-                    { id: 'employee', header: ['Сотрудник', { content: 'textFilter' }], sort: 'string', fillspace: true, },
+                    { id: 'employee', header: ['Создатель проекта', { content: 'textFilter' }], sort: 'string', fillspace: true, },
                 ],
                 data: progects,
                 onContext: {},
@@ -38,7 +38,7 @@ export function ProgectTabContextMenu() {
 export function TabControllsView() {
     return {
         id: 'progecttab-controlls',
-        
+        batch:"ProgectTabView",
         
         cols: [
             {

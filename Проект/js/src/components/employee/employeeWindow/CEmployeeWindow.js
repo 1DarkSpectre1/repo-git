@@ -39,16 +39,16 @@ export class CEmployeeWindow {
             }
         }
 
-        // подгрузка должностей
-        positionModel.getPositions().then((positions) => {
-            positions.map((position) => {
-                position.id = position.name
-                position.value = position.name
-            })
+        //подгрузка должностей
+        // positionModel.getPositions().then((positions) => {
+        //     positions.map((position) => {
+        //         position.id = position.name
+        //         position.value = position.name
+        //     })
 
-            this.view.formfields.position.define('options', positions)
-            this.view.formfields.position.refresh()
-        })
+             this.view.formfields.position.define('options', positions)
+             this.view.formfields.position.refresh()
+        // })
 
         // обработка закрытия окна
         this.view.windowCancelBtn.attachEvent('onItemClick', () => {
@@ -64,38 +64,32 @@ export class CEmployeeWindow {
                 return;
             }
 
-            switch (this.type) {
-                case EMPLOYEE_WINDOW_TYPE.create:
-                    employeeModel.createEmployee(this.fetch()).then(() => {
-                        this.onChange()
-                        this.hide()
-                    })
-                    break;
-                case EMPLOYEE_WINDOW_TYPE.update:
-                    employeeModel.updateEmployee(this.fetch()).then(() => {
-                        this.onChange()
-                        this.hide()
-                    })
-                    break;
+             switch (this.type) {
+                 case EMPLOYEE_WINDOW_TYPE.create:
+        //             employeeModel.createEmployee(this.fetch()).then(() => {
+        //                 this.onChange()
+                        webix.message("Создание сотрудника")
+                         this.hide()
+        //             })
+                     break;
+                 case EMPLOYEE_WINDOW_TYPE.update:
+        //             employeeModel.updateEmployee(this.fetch()).then(() => {
+        //                 this.onChange()
+                        webix.message("Изменение сотрудника")
+                         this.hide()
+        //             })
+                     break;
                 case EMPLOYEE_WINDOW_TYPE.delete:
-                    // получение сотрудника
-                    let employee = this.fetch()
-                    employeeModel.getCardByEmployeeID(employee.ID).then((books) => {/////////////////////////&&&&
-                        // проверка наличия несданных книг
-                        if (books) {
-                            webix.message('Нельзя удалить сотрудника, который не сдал книги')
-                            return
-                        }
-
-                        // удаление сотрудника
-                        employeeModel.deleteEmployee(this.fetch()).then(() => {
-                            this.onChange()
-                            this.hide()
-                        })
-                    })
-                    break;
-            }
-        })
+        //                 // удаление сотрудника
+        //                 employeeModel.deleteEmployee(this.fetch()).then(() => {
+        //                     this.onChange()
+                            webix.message("Удаление сотрудника")
+                             this.hide()
+        //                 })
+        //             })
+                     break;
+             }
+         })
     }
 
     // метод вызова модального окна
@@ -115,9 +109,23 @@ export class CEmployeeWindow {
         switch (type) {
             case EMPLOYEE_WINDOW_TYPE.create:
                 this.view.windowLabel.setHTML('Добавление сотрудника')
+                this.view.formfields.lastname.enable()
+                this.view.formfields.firstname.enable()
+                this.view.formfields.middlename.enable()
+                this.view.formfields.position.enable()
+                this.view.formfields.phoneNumber.enable()
+                this.view.formfields.email.enable()
+                this.view.window.resize()
                 break;
             case EMPLOYEE_WINDOW_TYPE.update:
                 this.view.windowLabel.setHTML('Редактирование сотрудника')
+                this.view.formfields.lastname.enable()
+                this.view.formfields.firstname.enable()
+                this.view.formfields.middlename.enable()
+                this.view.formfields.position.enable()
+                this.view.formfields.phoneNumber.enable()
+                this.view.formfields.email.enable()
+                this.view.window.resize()
                 break;
             case EMPLOYEE_WINDOW_TYPE.delete:
                 this.view.formfields.lastname.disable()

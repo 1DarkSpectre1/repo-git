@@ -44,7 +44,7 @@ export class CMainWindow {
             if((user.login=="1")&&(user.password=="1"))
             this.onLogin=true
             else
-            webix.message('Неверный логин или пароль')
+            webix.message('Логин: 1 Пароль: 1')
             this.switch(workedPlace)
             // авторизация пользователя
             // authModel.login(user).then((isValid) => {

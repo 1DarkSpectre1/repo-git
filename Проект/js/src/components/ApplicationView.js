@@ -11,27 +11,19 @@ export default function WorkedPlaceView(taskTab, employeeTab, progectTab, userIn
                 cols:[
                     {
                       view: "sidebar",
+                      id:"main-tabbar",
                       data: menu_data,
                       collapsed:true,
-                      on:{
-                        onAfterSelect: function(id){
-                          $$("form1").showBatch(id);
-                        }
-                      }
+                      
                     },
                     {id:"form1",visibleBatch:"ProgectTabView", rows:[
                         {
-                            id: 'main',
-                            batch:"ProgectTabView",
+                            id: 'main',         
                             height:35,
-                            cols: [
-                              
-                                {},
-                                
+                            cols: [                     
+                                {},                               
                                 {
-                                    id: 'tab-controlls',
-                                    
-                                    rows: [
+                                    id: "tab-controlls", rows: [
                                         taskTab.configTabControlls(),
                                         employeeTab.configTabControlls(),
                                         progectTab.configTabControlls(),

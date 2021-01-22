@@ -18,27 +18,21 @@ class TaskModel extends Model {
 
     // создание книги
     createTask(task) {
-        // преобразование года в дату
-        let date = new Date(task.year, 0)
-        task.year = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-
+        
+        
         return this.post('/task/create', task)
     }
 
     // изменение книги
     updateTask(task) {
-        // преобразование года в дату
-        let date = new Date(task.year, 0)
-        task.year = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-
+        
+        
         return this.post('/task/update', task)
     }
 
     // удаление книги
     deleteTask(task) {
-        // преобразование года в дату
-        let date = new Date(task.year, 0)
-        task.year = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+        
         
         return this.post('/task/delete', task)
     }

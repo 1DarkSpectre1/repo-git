@@ -39,7 +39,7 @@ export class Application {
         )
         // инициализация компонента окна входа в приложение
           this.mainWindow.init(false)
-         //this.mainWindow.init(
+        //this.mainWindow.init(
        //      () => { location.replace('/') }, // onLogin
        //  )
     }
@@ -52,7 +52,7 @@ export class Application {
 
     //////////////////////////////////
     onLogout_(){
-        webix.message('Выход')
+        
         
         this.mainWindow.init(false)
         this.mainWindow.switch(this.view.workedPlace)
@@ -64,6 +64,7 @@ export class Application {
             multiviews: $$('main-views'),
             workedPlace: $$('workedPlace'),
             tabControllsContainer: $$('main'),
+            datatable: $$('progectTabDatatable'),
         }
 
         // компоненты требующие авторизации
@@ -72,20 +73,35 @@ export class Application {
         // компоненты не будут отрисованы
         // checkAuth((isAuth) => {
         //     if (isAuth) {
-        //         // переключение таба
-        //         this.view.tabbar.attachEvent('onItemClick', () => {
-        //             this.dispatch(this.view.tabbar.getValue())
-        //         })
 
-        //         // отрисовать рабочее пространство
+
+                 // отрисовать рабочее пространство
                  this.view.workedPlace.show()
 
-        //        // обработчики событий компонентов
+                // обработчики событий компонентов
                  this.userInfo.attachEvents()
                  this.taskTab.attachEvents()
                  this.employeeTab.attachEvents()
                  this.progectTab.attachEvents()
 
+                 
+                 // переключение таба
+                this.view.tabbar.attachEvent('onAfterSelect', (id) =>{
+                        
+                        if (!this.view.datatable.getSelectedItem()) {
+                            if(!(id=='ProgectTabView')){
+                                $$(this.view.tabbar).select('ProgectTabView');  
+                                webix.message("Выберите проект")                     
+                            }
+                            
+                            return 
+                        }
+                        
+                        $$("form1").showBatch(id);
+                        $$("tab-controlls").showBatch(id);
+                      }
+                    
+                )
         //         // выделить таб книг
         //         this.dispatch(APP_TAB.booksTab)
         //     } else {
@@ -97,40 +113,10 @@ export class Application {
         this.mainWindow.attachEvents( this.view.workedPlace)
 
         // первоночальное состояние приложения
-        this.view.workedPlace.hide()
-        this.mainWindow.switch(this.view.workedPlace)
+        // this.view.workedPlace.hide()
+        // this.mainWindow.switch(this.view.workedPlace)
     }
-    dispatch(tab) {
-        let tabObj
-
-        // определение объекта таба
-        switch (tab) {
-            case APP_TAB.booksTab:
-                tabObj = this.bookTab
-                break
-            case APP_TAB.employeesTab:
-                tabObj = this.employeeTab
-                break
-            case APP_TAB.journalTab:
-                tabObj = this.journalTab
-                break
-            default:
-                console.error('Incorrect tab: ', tab)
-                return
-        }
-
-        // переключение таба
-        this.view.tabbar.setValue(tab)
-        this.view.multiviews.setValue(tab)
-
-        // замена элементов управления в header'е
-        this.bookTab.hideControlls()
-        this.employeeTab.hideControlls()
-        this.journalTab.hideControlls()
-        tabObj.switchControlls()
-
-        return tabObj
-    }
+   
 
     refreshControlls(config) {
         webix.ui(config, this.view.tabControllsContainer, $$('tab-controlls'))

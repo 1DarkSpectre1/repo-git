@@ -1,6 +1,6 @@
 import { EmployeeTabView,EmployeeTabContextMenu,  TabControllsView } from './EmployeeTabView.js';
-//import { CEmployeeWindow, EMPLOYEE_WINDOW_TYPE } from './employeeWindow/CEmployeeWindow.js';
-//import { Employee } from '../../models/entities/employee.js';
+import { CEmployeeWindow, EMPLOYEE_WINDOW_TYPE } from './employeeWindow/CEmployeeWindow.js';
+import { Employee } from '../../models/entities/employee.js';
 //import employeeModel from '../../models/employeeModel.js';
 
 // класс таба 'Сотрудники'
@@ -16,18 +16,17 @@ export class CEmployeeTab {
     init( refreshControlls) {
         this.refreshControlls = refreshControlls // функция обновления элементов управления в header'е
 
-        // this.window = new CEmployeeWindow(); // инициализация компонента окна
-        // this.window.init(
-        //     () => { this.refreshTable() }
-        // ) // вызова инициализации компонента окна
+         this.window = new CEmployeeWindow(); // инициализация компонента окна
+         this.window.init(
+             () => { this.refreshTable() }
+         ) // вызова инициализации компонента окна
 
     }
 
     // метод получения webix конфигурации компонента
     config() {
         // т.к. window и popup расположены не в дереве приложения, а поверх слоев, его нужно отрисовывать отдельно
-        // webix.ui(this.window.config())
-        // webix.ui(this.libraryCard.config())
+         webix.ui(this.window.config())
          webix.ui(EmployeeTabContextMenu())
 
         // вызов функции представления
@@ -58,64 +57,64 @@ export class CEmployeeTab {
     //         this.card()
     //     })
 
-    //     // создание сотрудника
-    //     this.view.btns.createBtn.attachEvent('onItemClick', () => {
-    //         this.createEmployee()
-    //     })
+        // создание сотрудника
+        this.view.btns.createBtn.attachEvent('onItemClick', () => {
+            this.createEmployee()
+        })
 
-    //     // изменение сотрудника
-    //     this.view.btns.updateBtn.attachEvent('onItemClick', () => {
-    //         this.updateEmployee()
-    //     })
+        // изменение сотрудника
+        this.view.btns.updateBtn.attachEvent('onItemClick', () => {
+            this.updateEmployee()
+        })
 
-    //     // удаление сотрудника
-    //     this.view.btns.deleteBtn.attachEvent('onItemClick', () => {
-    //         this.deleteEmployee()
-    //     })
-    //     // инициализация обработчиков событий модального окна
-    //     this.window.attachEvents()
+        // удаление сотрудника
+        this.view.btns.deleteBtn.attachEvent('onItemClick', () => {
+            this.deleteEmployee()
+        })
+        // инициализация обработчиков событий модального окна
+        this.window.attachEvents()
 
         // прикрепление контекстного меню к таблице
         this.view.datatableContextMenu.attachTo(this.view.datatable)
     //     // загрузка первичных данных в таблицу
     //     this.refreshTable()
 
-    //     // обработка события нажатия на пункт контекстного меню
-    //     this.view.datatableContextMenu.attachEvent('onMenuItemClick', (id) => {
-    //         // получение значения пункта, на которое произошло нажатие
-    //         let item = this.view.datatableContextMenu.getItem(id).value
-    //         this.handleContextMenu(item)
-    //     });
+       // обработка события нажатия на пункт контекстного меню
+     this.view.datatableContextMenu.attachEvent('onMenuItemClick', (id) => {
+            // получение значения пункта, на которое произошло нажатие
+            let item = this.view.datatableContextMenu.getItem(id).value
+            this.handleContextMenu(item)
+        });
      }
 
-    // // обработка выбора в контекстном меню
-    // handleContextMenu(item) {
-    //     switch (item) {
-    //         case EMPLOYEE_CONTEXT_MENU.edit: // редактирование сотрудника
-    //             this.updateEmployee()
-    //             break;
-    //         case EMPLOYEE_CONTEXT_MENU.remove: // удаление сотрудника
-    //             this.deleteEmployee()
-    //             break;
-    //         default:
-    //             console.error(`Неизвестное значение пункта меню: ${item}.`);
-    //             break;
-    //     }
-    // }
+    // обработка выбора в контекстном меню
+    handleContextMenu(item) {
+        switch (item) {
+            case EMPLOYEE_CONTEXT_MENU.edit: // редактирование сотрудника
+                this.updateEmployee()
+                break;
+            case EMPLOYEE_CONTEXT_MENU.remove: // удаление сотрудника
+                this.deleteEmployee()
+                break;
+            default:
+                console.error(`Неизвестное значение пункта меню: ${item}.`);
+                break;
+        }
+    }
 
-    // // функция обновления таблицы сотрудников
-    // refreshTable(employees) {
-    //     if (employees) {
-    //         this.view.datatable.clearAll()
-    //         this.view.datatable.parse(employees)
-    //         return
-    //     } else {
-    //         employeeModel.getEmployees().then((employees) => {
-    //             this.view.datatable.clearAll()
-    //             this.view.datatable.parse(employees)
-    //         })
-    //     }
-    // }
+    // функция обновления таблицы сотрудников
+    refreshTable() {
+     //   if (employees) {
+            this.view.datatable.clearAll()
+            this.view.datatable.parse(employees)
+          //  return
+        // } else {
+        //     employeeModel.getEmployees().then((employees) => {
+        //         this.view.datatable.clearAll()
+        //         this.view.datatable.parse(employees)
+        //     })
+        // }
+    }
 
     // // метод отображения таба с фильтрацией по сотруднику
     // showByEmployeeID(employeeID) {
@@ -146,82 +145,82 @@ export class CEmployeeTab {
     //     })
     // }
 
-    // // функция переключения оторбажения элементов управления таба
-    // switchControlls() {
-    //     switch (this.view.controlls.isVisible()) {
-    //         case true:
-    //             this.hideControlls()
-    //             break;
-    //         case false:
-    //             this.showControlls()
-    //             break;
-    //     }
-    // }
+    // функция переключения оторбажения элементов управления таба
+    switchControlls() {
+        switch (this.view.controlls.isVisible()) {
+            case true:
+                this.hideControlls()
+                break;
+            case false:
+                this.showControlls()
+                break;
+        }
+    }
 
-    // // функция отображения элементов управления таба
-    // showControlls() {
-    //     this.view.controlls.show()
-    // }
+    // функция отображения элементов управления таба
+    showControlls() {
+        this.view.controlls.show()
+    }
 
-    // // функция сокрытия элементов управления таба
-    // hideControlls() {
-    //     this.view.controlls.hide()
-    // }
+    // функция сокрытия элементов управления таба
+    hideControlls() {
+        this.view.controlls.hide()
+     }
 
 
-    // // функция создания сотрудника
-    // createEmployee() {
-    //     this.window.parse(new Employee())
-    //     this.window.switch(EMPLOYEE_WINDOW_TYPE.create)
-    // }
+    // функция создания сотрудника
+    createEmployee() {
+        this.window.parse(new Employee())
+        this.window.switch(EMPLOYEE_WINDOW_TYPE.create)
+    }
 
-    // // функция изменения сотрудника
-    // updateEmployee() {
-    //     // получение выделенного элемента
-    //     let selected = this.view.datatable.getSelectedItem()
+    // функция изменения сотрудника
+    updateEmployee() {
+        // получение выделенного элемента
+        let selected = this.view.datatable.getSelectedItem()
 
-    //     if (!selected) {
-    //         webix.message('Выделите строку')
-    //         return
-    //     }
-    //     if (!selected.ID) {
-    //         console.error('Incorrect ID of item:', selected.ID)
-    //         return
-    //     }
-    //     employeeModel.getEmployeeByID(selected.ID).then((employee) => {
-    //         // проверка наличия данных
-    //         if (!employee) {
-    //             return
-    //         }
+        if (!selected) {
+            webix.message('Выделите строку')
+            return
+        }
+        if (!selected.ID) {
+            console.error('Incorrect ID of item:', selected.ID)
+            return
+        }
+        // employeeModel.getEmployeeByID(selected.ID).then((employee) => {
+        //     // проверка наличия данных
+        //     if (!employee) {
+        //         return
+        //     }
 
-    //         this.window.parse(employee)
-    //         this.window.switch(EMPLOYEE_WINDOW_TYPE.update)
-    //     })
-    // }
+            this.window.parse(selected)
+            this.window.switch(EMPLOYEE_WINDOW_TYPE.update)
+       // })
+    }
 
-    // // функция удаления сотрудника
-    // deleteEmployee() {
-    //     // получение выделенного элемента
-    //     let selected = this.view.datatable.getSelectedItem()
+    // функция удаления сотрудника
+    deleteEmployee() {
+        // получение выделенного элемента
+        let selected = this.view.datatable.getSelectedItem()
 
-    //     if (!selected) {
-    //         webix.message('Выделите строку')
-    //         return
-    //     }
-    //     if (!selected.ID) {
-    //         console.error('Incorrect ID of item:', selected.ID)
-    //         return
-    //     }
-    //     employeeModel.getEmployeeByID(selected.ID).then((employee) => {
-    //         // проверка наличия данных
-    //         if (!employee) {
-    //             return
-    //         }
+        if (!selected) {
+            webix.message('Выделите строку')
+            return
+        }
+        if (!selected.ID) {
+            console.error('Incorrect ID of item:', selected.ID)
+            return
+        }
+        // employeeModel.getEmployeeByID(selected.ID).then((employee) => {
+        //     // проверка наличия данных
+        //     if (!employee) {
+        //         return
+        //     }
 
-    //         this.window.parse(employee)
-    //         this.window.switch(EMPLOYEE_WINDOW_TYPE.delete)
-    //     })
-    // }
+            this.window.parse(selected)
+            this.window.switch(EMPLOYEE_WINDOW_TYPE.delete)
+      //  })
+    }
 }
 
 // допустимые значения пунктов контекстного меню таба Книги

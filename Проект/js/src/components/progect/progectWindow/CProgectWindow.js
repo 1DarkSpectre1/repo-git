@@ -1,9 +1,8 @@
-import employeeModel from '../../../models/employeeModel.js';
-import positionModel from '../../../models/positionModel.js';
-import EmployeeWindowView from './EmployeeWindowView.js';
+
+import ProgectWindowView from './ProgectWindowView.js';
 
 // компонент окна для работы с сущностью сотрудника
-export class CEmployeeWindow {
+export class CProgectWindow {
     constructor() {
         this.view       // объект для быстрого доступа к представлениям
         this.type       // тип текущего отображения окна
@@ -17,86 +16,65 @@ export class CEmployeeWindow {
 
     // метод получения webix конфигурации компонента
     config() {
-        return EmployeeWindowView()
+        return ProgectWindowView()
     }
 
     // метод инициализации обработчиков событий компонента
     attachEvents() {
         // инициализация используемых представлений
         this.view = {
-            window: $$('employeeWindow'),
-            windowLabel: $$('employeeWindowLabel'),
-            windowCancelBtn: $$('employeeWindowCancelBtn'),
-            windowConfirmBtn: $$('employeeWindowConfirmBtn'),
-            form: $$('employeeWindowForm'),
+            window: $$('progectWindow'),
+            windowLabel: $$('progectWindowLabel'),
+            windowCancelBtn: $$('progectWindowCancelBtn'),
+            windowConfirmBtn: $$('progectWindowConfirmBtn'),
+            form: $$('progectWindowForm'),
             formfields: {
-                lastname: $$('employeeWindowFormLastname'),
-                firstname: $$('employeeWindowFormFirstname'),
-                middlename: $$('employeeWindowFormMiddlename'),
-                position: $$('employeeWindowFormPosition'),
-                phoneNumber: $$('employeeWindowFormPhoneNumber'),
-                email: $$('employeeWindowFormEmail'),
+                name: $$('progectWindowFormName'),
+                employee: $$('progectWindowFormEmployee'),              
             }
         }
-
-        // подгрузка должностей
-        positionModel.getPositions().then((positions) => {
-            positions.map((position) => {
-                position.id = position.name
-                position.value = position.name
-            })
-
-            this.view.formfields.position.define('options', positions)
-            this.view.formfields.position.refresh()
-        })
+        
 
         // обработка закрытия окна
         this.view.windowCancelBtn.attachEvent('onItemClick', () => {
             this.view.window.hide()
         })
 
-        // обработка события 'принять'
         this.view.windowConfirmBtn.attachEvent('onItemClick', () => {
             // при удалении не требуется валидировать данные формы
             // валидация введенных данных по обязательным полям
-            if (this.type !== EMPLOYEE_WINDOW_TYPE.delete && !this.validate()) {
+            if (this.type !== PROGECT_WINDOW_TYPE.delete && !this.validate()) {
                 webix.message('Заполните поля отмеченные *', 'error')
                 return;
             }
 
-            switch (this.type) {
-                case EMPLOYEE_WINDOW_TYPE.create:
-                    employeeModel.createEmployee(this.fetch()).then(() => {
-                        this.onChange()
-                        this.hide()
-                    })
-                    break;
-                case EMPLOYEE_WINDOW_TYPE.update:
-                    employeeModel.updateEmployee(this.fetch()).then(() => {
-                        this.onChange()
-                        this.hide()
-                    })
-                    break;
-                case EMPLOYEE_WINDOW_TYPE.delete:
-                    // получение сотрудника
-                    let employee = this.fetch()
-                    employeeModel.getCardByEmployeeID(employee.ID).then((books) => {
-                        // проверка наличия несданных книг
-                        if (books) {
-                            webix.message('Нельзя удалить сотрудника, который не сдал книги')
-                            return
-                        }
-
-                        // удаление сотрудника
-                        employeeModel.deleteEmployee(this.fetch()).then(() => {
-                            this.onChange()
-                            this.hide()
-                        })
-                    })
-                    break;
-            }
-        })
-    }
+             switch (this.type) {
+                 case PROGECT_WINDOW_TYPE.create:
+        //             employeeModel.createEmployee(this.fetch()).then(() => {
+        //                 this.onChange()
+                        webix.message("Создание проетка")
+                         this.hide()
+        //             })
+                     break;
+                 case PROGECT_WINDOW_TYPE.update:
+        //             employeeModel.updateEmployee(this.fetch()).then(() => {
+        //                 this.onChange()
+                        webix.message("Изменение проекта")
+                         this.hide()
+        //             })
+                     break;
+                case PROGECT_WINDOW_TYPE.delete:
+        //                 // удаление сотрудника
+        //                 employeeModel.deleteEmployee(this.fetch()).then(() => {
+        //                     this.onChange()
+                            webix.message("Удаление проекта")
+                             this.hide()
+        //                 })
+        //             })
+                     break;
+             }
+         })
+     }
 
     // метод вызова модального окна
     switch(type) {
@@ -113,24 +91,22 @@ export class CEmployeeWindow {
     // метод отображения окна
     show(type) {
         switch (type) {
-            case EMPLOYEE_WINDOW_TYPE.create:
-                this.view.windowLabel.setHTML('Добавление сотрудника')
+            case PROGECT_WINDOW_TYPE.create:
+                this.view.windowLabel.setHTML('Добавление проекта')
                 break;
-            case EMPLOYEE_WINDOW_TYPE.update:
-                this.view.windowLabel.setHTML('Редактирование сотрудника')
+            case PROGECT_WINDOW_TYPE.update:
+                this.view.windowLabel.setHTML('Редактирование проекта')
+                this.view.formfields.name.enable()
+                this.view.formfields.employee.disable()
                 break;
-            case EMPLOYEE_WINDOW_TYPE.delete:
-                this.view.formfields.lastname.disable()
-                this.view.formfields.firstname.disable()
-                this.view.formfields.middlename.disable()
-                this.view.formfields.position.disable()
-                this.view.formfields.phoneNumber.disable()
-                this.view.formfields.email.disable()
-                this.view.windowLabel.setHTML('Удаление сотрудника')
+            case PROGECT_WINDOW_TYPE.delete:
+                this.view.formfields.name.disable()
+                this.view.formfields.employee.disable()
+                this.view.windowLabel.setHTML('Удаление проекта')
                 this.view.window.resize()
                 break;
             default:
-                console.error('Неизвестный тип отображения окна для работы с сущностью сотрудника');
+                console.error('Неизвестный тип отображения окна для работы с сущностью проекта');
                 break;
         }
 
@@ -158,13 +134,8 @@ export class CEmployeeWindow {
         let isValid = false
 
         // удаление пробелов в полях формы
-        this.view.formfields.lastname.setValue(this.view.formfields.lastname.getValue().trim())
-        this.view.formfields.firstname.setValue(this.view.formfields.firstname.getValue().trim())
-        this.view.formfields.middlename.setValue(this.view.formfields.middlename.getValue().trim())
-        this.view.formfields.position.setValue(this.view.formfields.position.getValue().trim())
-        this.view.formfields.phoneNumber.setValue(this.view.formfields.phoneNumber.getValue().trim())
-        this.view.formfields.email.setValue(this.view.formfields.email.getValue().trim())
-
+        this.view.formfields.name.setValue(this.view.formfields.name.getValue().trim())
+        this.view.formfields.employee.setValue(this.view.formfields.employee.getValue().trim())
         // валидация webix
         isValid = this.view.form.validate()
 
@@ -173,7 +144,7 @@ export class CEmployeeWindow {
 }
 
 // типы отображения модального окна для работы с сущностью книги
-export const EMPLOYEE_WINDOW_TYPE = {
+export const PROGECT_WINDOW_TYPE = {
     create: 'CREATE',
     update: 'UPDATE',
     delete: 'DELETe',

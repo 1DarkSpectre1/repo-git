@@ -1,27 +1,27 @@
-import { EMPLOYEE_WINDOW_TYPE } from './CEmployeeWindow.js';
+import { PROGECT_WINDOW_TYPE } from './CProgectWindow.js';
 
 // возвращает webix конфигурации окна для работы с сущностью сотрудника
-export default function EmployeeWindowView(type) {
+export default function ProgectWindowView(type) {
     let headText = 'Сотрудник' // текст заголовка модального окна
 
     switch (type) {
-        case EMPLOYEE_WINDOW_TYPE.create:
+        case PROGECT_WINDOW_TYPE.create:
             headText = 'Добавление сотрудника'
             break;
-        case EMPLOYEE_WINDOW_TYPE.update:
+        case PROGECT_WINDOW_TYPE.update:
             headText = 'Редактирование сотрудника'
             break;
-        case EMPLOYEE_WINDOW_TYPE.delete:
+        case PROGECT_WINDOW_TYPE.delete:
             headText = 'Удаление сотрудника'
             break;
     }
 
     return {
         view: 'window',
-        id: 'employeeWindow',
+        id: 'progectWindow',
         head: {
             view: 'template',
-            id: 'employeeWindowLabel',
+            id: 'progectWindowLabel',
             template: headText,
             css: 'webix_template'
         },
@@ -30,64 +30,34 @@ export default function EmployeeWindowView(type) {
         width: 400,
         body: {
             view: 'form',
-            id: 'employeeWindowForm',
+            id: 'progectWindowForm',
             elements: [
                 {
                     view: 'text',
-                    id: 'employeeWindowFormLastname',
-                    label: 'Фамилия',
-                    name: 'lastname',
+                    id: 'progectWindowFormName',
+                    label: 'Описание',
+                    name: 'name',
                     required: true,
                     labelWidth: 150,
                 },
                 {
                     view: 'text',
-                    id: 'employeeWindowFormFirstname',
-                    label: 'Имя',
-                    name: 'firstname',
+                    id: 'progectWindowFormEmployee',
+                    label: 'Создатель проекта',
+                    name: 'employee',
                     required: true,
-                    labelWidth: 150,
-                },
-                {
-                    view: 'text',
-                    id: 'employeeWindowFormMiddlename',
-                    label: 'Отчество',
-                    name: 'middlename',
-                    labelWidth: 150,
-                },
-                {
-                    view: 'richselect',
-                    id: 'employeeWindowFormPosition',
-                    label: 'Должность',
-                    name: 'position',
-                    required: true,
-                    labelWidth: 150,
-                    options: []
-                },
-                {
-                    view: 'text',
-                    id: 'employeeWindowFormPhoneNumber',
-                    label: 'Телефонный номер',
-                    name: 'phone_number',
-                    labelWidth: 150,
-                },
-                {
-                    view: 'text',
-                    id: 'employeeWindowFormEmail',
-                    label: 'Электронная почта',
-                    name: 'email',
                     labelWidth: 150,
                 },
                 {
                     cols: [
                         {
                             view: 'button',
-                            id: 'employeeWindowConfirmBtn',
+                            id: 'progectWindowConfirmBtn',
                             value: 'Применить',
                         },
                         {
                             view: 'button',
-                            id: 'employeeWindowCancelBtn',
+                            id: 'progectWindowCancelBtn',
                             value: 'Отмена',
                         },
                     ]

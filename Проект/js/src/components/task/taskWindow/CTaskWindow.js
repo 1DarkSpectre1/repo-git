@@ -42,7 +42,7 @@ export class CTaskWindow {
             this.view.window.hide()
         })
 
-        // обработка события 'принять'
+       // обработка события 'принять'
         this.view.windowConfirmBtn.attachEvent('onItemClick', () => {
             // валидация введенных данных по обязательным полям
             if (!this.validate()) {
@@ -52,22 +52,25 @@ export class CTaskWindow {
 
             switch (this.type) {
                 case TASK_WINDOW_TYPE.create:
-                    taskModel.createBook(this.fetch()).then(() => {
-                        this.onChange()
+                   // taskModel.createBook(this.fetch()).then(() => {
+                  //      this.onChange()
+                  webix.message("Создание задачи")
                         this.hide()
-                    })
+                   // })
                     break;
                 case TASK_WINDOW_TYPE.update:
-                    taskModel.updateBook(this.fetch()).then(() => {
-                        this.onChange()
+                   // taskModel.updateBook(this.fetch()).then(() => {
+                   //     this.onChange()
+                   webix.message("Изменение задачи")
                         this.hide()
-                    })
+                  //  })
                     break;
                 case TASK_WINDOW_TYPE.delete:
-                    taskModel.deleteBook(this.fetch()).then(() => {
-                        this.onChange()
+                 //   taskModel.deleteBook(this.fetch()).then(() => {
+                  //      this.onChange()
+                  webix.message("Удаление задачи")
                         this.hide()
-                    })
+                  //  })
                     break;
             }
         })
@@ -91,13 +94,24 @@ export class CTaskWindow {
             case TASK_WINDOW_TYPE.create:
                 this.view.windowLabel.setHTML('Добавление задачи')
                 this.view.formfields.status.hide()
+                this.view.formfields.fact_hours.hide()
                 this.view.window.resize()
                 break;
             case TASK_WINDOW_TYPE.update:
                 this.view.windowLabel.setHTML('Редактирование задачи')
+                this.view.formfields.status.show()
+                this.view.formfields.fact_hours.show()
+                this.view.formfields.name.enable()
+                this.view.formfields.employee.enable()
+                this.view.formfields.status.enable()
+                this.view.formfields.sch_hours.enable()
+                this.view.formfields.fact_hours.enable()
+                this.view.window.resize()
                 break;
             case TASK_WINDOW_TYPE.delete:
                 this.view.windowLabel.setHTML('Удаление задачи')
+                this.view.formfields.fact_hours.show()     
+                this.view.formfields.status.show()
                 this.view.formfields.name.disable()
                 this.view.formfields.employee.disable()
                 this.view.formfields.status.disable()
@@ -111,6 +125,7 @@ export class CTaskWindow {
         }
 
         this.type = type
+        
         this.view.window.show()
     }
 
@@ -127,6 +142,7 @@ export class CTaskWindow {
     // метод размещения сущности в форме окна
     parse(values) {
         this.view.form.setValues(values)
+        
     }
 
     // функция валидации формы
@@ -135,9 +151,9 @@ export class CTaskWindow {
 
         // удаление пробелов в полях формы
         this.view.formfields.name.setValue(this.view.formfields.name.getValue().trim())
-        this.view.formfields.employee.setValue(this.view.formfields.author.getValue().trim())
-        this.view.formfields.sch_hours.setValue(this.view.formfields.publisher.getValue().trim())
-        this.view.formfields.fact_hours.setValue(this.view.formfields.year.getValue().trim())
+        this.view.formfields.employee.setValue(this.view.formfields.employee.getValue().trim())
+        this.view.formfields.sch_hours.setValue(this.view.formfields.sch_hours.getValue().trim())
+        this.view.formfields.fact_hours.setValue(this.view.formfields.fact_hours.getValue().trim())
 
         // валидация webix
         isValid = this.view.form.validate()
