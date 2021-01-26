@@ -5,7 +5,7 @@ CREATE SCHEMA task_manager
 	"pk_id" serial NOT NULL,
 	"c_name" varchar(100) NOT NULL,
 	"c_sch_hours" float4 NOT NULL,
-	"c_fact_hours" float4 NOT NULL,
+	"c_fact_hours" float4 ,
 	"fk_status" int NOT NULL,
 	"fk_prog" int NOT NULL,
 	"fk_employees" int NOT NULL,
@@ -31,9 +31,9 @@ CREATE TABLE task_manager.t_employees (
 	"fk_position" int NOT NULL,
 	"c_lastname" varchar(50) NOT NULL,
 	"c_firstname" varchar(50) NOT NULL,
-	"c_middlename" varchar(50) NOT NULL,
-	"c_phone_number" varchar(50) NOT NULL,
-	"c_email" varchar(50) NOT NULL,
+	"c_middlename" varchar(50) ,
+	"c_phone_number" varchar(50) ,
+	"c_email" varchar(50) ,
 	CONSTRAINT "t_employees_pk" PRIMARY KEY ("id_employees")
 ) WITH (
   OIDS=FALSE
