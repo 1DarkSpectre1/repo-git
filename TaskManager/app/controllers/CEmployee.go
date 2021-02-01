@@ -3,14 +3,14 @@ package controllers
 import (
 	"encoding/json"
 	"io/ioutil"
-	"sample-project/app/helpers"
-	"sample-project/app/models/entities"
-	"sample-project/app/models/providers/employee_provider"
+	"task_manager/app/helpers"
+	"task_manager/app/models/entities"
+	"task_manager/app/models/providers/employee_provider"
 
 	"github.com/revel/revel"
 )
 
-// CEmployee
+// CEmployee стр
 type CEmployee struct {
 	*revel.Controller
 	provider *employee_provider.PEmployee
@@ -164,20 +164,6 @@ func (c *CEmployee) Delete() revel.Result {
 
 	// рендер положительного результата
 	return c.RenderJSON(Succes(nil))
-}
-
-// GetCardBooks получение сотрудника по id
-func (c *CEmployee) GetCardBooks(id int64) revel.Result {
-	// получение читательского билета
-	books, err := c.provider.GetCardBooks(id)
-	if err != nil {
-		revel.AppLog.Errorf("CEmployee.GetCardBooks : c.provider.GetCardBooks, %s\n", err)
-		return c.RenderJSON(Failed(err.Error()))
-	}
-	revel.AppLog.Debugf("CEmployee.GetCardBooks, books: %+v\n", books)
-
-	// рендер положительного результата
-	return c.RenderJSON(Succes(books))
 }
 
 // fetchPostEmployee метод получения сущности из post параметров

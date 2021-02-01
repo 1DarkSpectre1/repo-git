@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"sample-project/app/helpers"
-	"sample-project/app/models/entities"
-	"sample-project/app/models/providers/user_provider"
+	"task_manager/app/helpers"
+	"task_manager/app/models/entities"
+	"task_manager/app/models/providers/user_provider"
 
 	"github.com/google/uuid"
 
 	"github.com/revel/revel"
 )
 
-// CAuth
+// CAuth ав
 type CAuth struct {
 	*revel.Controller
 	provider *user_provider.PUser
@@ -97,7 +97,7 @@ func (c *CAuth) Login() revel.Result {
 	return c.RenderJSON(Succes(true))
 }
 
-// Logout
+// Logout выход
 func (c *CAuth) Logout() revel.Result {
 	// получение токена клиента
 	token, err := helpers.GetToken(c.Controller)
@@ -132,7 +132,7 @@ func (c *CAuth) Check() revel.Result {
 	return c.RenderJSON(Succes(true))
 }
 
-// GetCurrentEmployee
+// GetCurrentEmployee получение 
 func (c *CAuth) GetCurrentEmployee() revel.Result {
 	// получение токена клиента
 	token, err := helpers.GetToken(c.Controller)

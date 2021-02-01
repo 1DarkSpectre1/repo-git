@@ -3,21 +3,21 @@ package controllers
 import (
 	"encoding/json"
 	"io/ioutil"
-	"sample-project/app/helpers"
-	"sample-project/app/models/entities"
-	"sample-project/app/models/providers/book_provider"
+	"task_manager/app/helpers"
+	"task_manager/app/models/entities"
+	"task_manager/app/models/providers/task_provider"
 
 	"github.com/revel/revel"
 )
 
-// CBook
-type CBook struct {
+// CTask
+type CTask struct {
 	*revel.Controller
-	provider *book_provider.PBook
+	provider *task_provider.PTask
 }
 
-// Init интерцептор контроллера CBook
-func (c *CBook) Init() revel.Result {
+// Init интерцептор контроллера CTask
+func (c *CTask) Init() revel.Result {
 	var (
 		cache helpers.ICache // экземпляр кэша
 		err   error          // ошибка в ходе выполнения функции
@@ -26,7 +26,7 @@ func (c *CBook) Init() revel.Result {
 	// инициализация кэша
 	cache, err = helpers.GetCache()
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Init : helpers.GetCache, %s\n", err)
+		revel.AppLog.Errorf("CTask.Init : helpers.GetCache, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
@@ -43,132 +43,132 @@ func (c *CBook) Init() revel.Result {
 	}
 
 	// инициализация провайдера
-	c.provider = new(book_provider.PBook)
+	c.provider = new(task_provider.PTask)
 	err = c.provider.Init()
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Init : c.provider.Init, %s\n", err)
+		revel.AppLog.Errorf("CTask.Init : c.provider.Init, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	return nil
 }
 
-// Destroy контроллера CBook
-func (c *CBook) Destroy() {
+// Destroy контроллера CTask
+func (c *CTask) Destroy() {
 	c.Controller.Destroy()
 
 	// удаление ссылки на провайдер
 	c.provider = nil
 }
 
-// GetAll получение всех книг
-func (c *CBook) GetAll() revel.Result {
-	// получение книг
-	books, err := c.provider.GetBooks()
+// GetAllByIDProgect получение всех задач
+func (c *CTask) GetAllByIDProgect(id int64) revel.Result {
+	// получение задач
+	tasks, err := c.provider.GetTasksByProgectID(id)
 	if err != nil {
-		revel.AppLog.Errorf("CBook.GetAll : c.provider.GetBooks, %s\n", err)
+		revel.AppLog.Errorf("CTask.GetAllByIDProgect : c.provider.GetTasksByProgectID, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CBook.GetAll : c.provider.GetBooks, books: %+v\n", books)
+	revel.AppLog.Debugf("CTask.GetAllByIDProgect : c.provider.GetTasksByProgectID, tasks: %+v\n", tasks)
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(books))
+	return c.RenderJSON(Succes(tasks))
 }
 
-// GetByID получение книги по id
-func (c *CBook) GetByID(id int64) revel.Result {
-	// получение книг
-	book, err := c.provider.GetBookByID(id)
+// GetByID получение задачи по id
+func (c *CTask) GetByID(id int64) revel.Result {
+	// получение задач
+	task, err := c.provider.GetTaskByID(id)
 	if err != nil {
-		revel.AppLog.Errorf("CBook.GetByID : c.provider.GetBookByID, %s\n", err)
+		revel.AppLog.Errorf("CTask.GetByID : c.provider.GetTaskByID, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CBook.GetByID : c.provider.GetBookByID, book: %+v\n", book)
+	revel.AppLog.Debugf("CTask.GetByID : c.provider.GetTaskByID, task: %+v\n", task)
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(book))
+	return c.RenderJSON(Succes(task))
 }
 
-// Create создание книги
-func (c *CBook) Create() revel.Result {
+// Create создание задачи
+func (c *CTask) Create() revel.Result {
 	var (
-		book *entities.Book // экземпляр сущности для создания
+		task *entities.Task // экземпляр сущности для создания
 		err  error          // ошибка в ходе выполнения функции
 	)
 
 	// формирование сущности для создания из post параметров
-	book, err = c.fetchPostBook()
+	task, err = c.fetchPostTask()
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Create : c.fetchPostBook, %s\n", err)
+		revel.AppLog.Errorf("CTask.Create : c.fetchPostTask, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	// создание сущности
-	book, err = c.provider.CreateBook(book)
+	task, err = c.provider.CreateTask(task)
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Create : c.provider.CreateBook, %s\n", err)
+		revel.AppLog.Errorf("CTask.Create : c.provider.CreateTask, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CBook.Create : c.provider.CreateBook, book: %+v\n", book)
+	revel.AppLog.Debugf("CTask.Create : c.provider.CreateTask, task: %+v\n", task)
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(book))
+	return c.RenderJSON(Succes(task))
 }
 
-// Update обновление книги
-func (c *CBook) Update() revel.Result {
+// Update обновление задачи
+func (c *CTask) Update() revel.Result {
 	var (
-		book *entities.Book // экземпляр сущности для обновления
+		task *entities.Task // экземпляр сущности для обновления
 		err  error          // ошибка в ходе выполнения функции
 	)
 
 	// формирование сущности для обновления из post параметров
-	book, err = c.fetchPostBook()
+	task, err = c.fetchPostTask()
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Create : c.fetchPostBook, %s\n", err)
+		revel.AppLog.Errorf("CTask.Create : c.fetchPostTask, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	// обновление сущности
-	book, err = c.provider.UpdateBook(book)
+	task, err = c.provider.UpdateTask(task)
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Create : c.provider.UpdateBook, %s\n", err)
+		revel.AppLog.Errorf("CTask.Create : c.provider.UpdateTask, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CBook.Update : c.provider.UpdateBook, book: %+v\n", book)
+	revel.AppLog.Debugf("CTask.Update : c.provider.UpdateTask, task: %+v\n", task)
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(book))
+	return c.RenderJSON(Succes(task))
 }
 
-// Delete удаление книги
-func (c *CBook) Delete() revel.Result {
+// Delete удаление задачи
+func (c *CTask) Delete() revel.Result {
 	var (
-		book *entities.Book // экземпляр сущности для удаления
+		task *entities.Task // экземпляр сущности для удаления
 		err  error          // ошибка в ходе выполнения функции
 	)
 
 	// формирование сущности для удаления из post параметров
-	book, err = c.fetchPostBook()
+	task, err = c.fetchPostTask()
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Create : c.fetchPostBook, %s\n", err)
+		revel.AppLog.Errorf("CTask.Create : c.fetchPostTask, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	// удаление сущности
-	err = c.provider.DeleteBook(book)
+	err = c.provider.DeleteTask(task)
 	if err != nil {
-		revel.AppLog.Errorf("CBook.Create : c.provider.DeleteBook, %s\n", err)
+		revel.AppLog.Errorf("CTask.Create : c.provider.DeleteTask, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CBook.Delete : c.provider.DeleteBook, book: %+v\n", book)
+	revel.AppLog.Debugf("CTask.Delete : c.provider.DeleteTask, task: %+v\n", task)
 
 	// рендер положительного результата
 	return c.RenderJSON(Succes(nil))
 }
 
-// fetchPostBook метод получения сущности из post параметров
-func (c *CBook) fetchPostBook() (b *entities.Book, err error) {
+// fetchPostTask метод получения сущности из post параметров
+func (c *CTask) fetchPostTask() (b *entities.Task, err error) {
 	var (
 		rawRequest []byte // байтовое представление тела запроса
 	)
@@ -176,18 +176,18 @@ func (c *CBook) fetchPostBook() (b *entities.Book, err error) {
 	// получение тела запроса
 	rawRequest, err = ioutil.ReadAll(c.Request.GetBody())
 	if err != nil {
-		revel.AppLog.Errorf("CBook.fetchPostBook : ioutil.ReadAll, %s\n", err)
+		revel.AppLog.Errorf("CTask.fetchPostTask : ioutil.ReadAll, %s\n", err)
 		return
 	}
 
 	// преобразование тела запроса в структуру сущности
 	err = json.Unmarshal(rawRequest, &b)
 	if err != nil {
-		revel.AppLog.Errorf("CBook.fetchPostBook : json.Unmarshal, %s\n", err)
+		revel.AppLog.Errorf("CTask.fetchPostTask : json.Unmarshal, %s\n", err)
 		return
 	}
 
-	revel.AppLog.Debugf("CBook.fetchPostBook, book: %+v\n", b)
+	revel.AppLog.Debugf("CTask.fetchPostTask, task: %+v\n", b)
 
 	return
 }

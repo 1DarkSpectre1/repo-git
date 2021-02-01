@@ -3,21 +3,21 @@ package controllers
 import (
 	"encoding/json"
 	"io/ioutil"
-	"sample-project/app/helpers"
-	"sample-project/app/models/entities"
-	"sample-project/app/models/providers/employee_provider"
+	"task_manager/app/helpers"
+	"task_manager/app/models/entities"
+	"task_manager/app/models/providers/progect_provider"
 
 	"github.com/revel/revel"
 )
 
-// CEmployee
-type CEmployee struct {
+// CProgect
+type CProgect struct {
 	*revel.Controller
-	provider *employee_provider.PEmployee
+	provider *progect_provider.PProgect
 }
 
-// Init интерцептор контроллера CEmployee
-func (c *CEmployee) Init() revel.Result {
+// Init интерцептор контроллера CProgect
+func (c *CProgect) Init() revel.Result {
 	var (
 		cache helpers.ICache // экземпляр кэша
 		err   error          // ошибка в ходе выполнения функции
@@ -26,7 +26,7 @@ func (c *CEmployee) Init() revel.Result {
 	// инициализация кэша
 	cache, err = helpers.GetCache()
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Init : helpers.GetCache, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Init : helpers.GetCache, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
@@ -43,145 +43,131 @@ func (c *CEmployee) Init() revel.Result {
 	}
 
 	// инициализация провайдера
-	c.provider = new(employee_provider.PEmployee)
+	c.provider = new(progect_provider.PProgect)
 	err = c.provider.Init()
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Init : c.provider.Init, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Init : c.provider.Init, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	return nil
 }
 
-// Destroy контроллера CEmployee
-func (c *CEmployee) Destroy() {
+// Destroy контроллера CProgect
+func (c *CProgect) Destroy() {
 	c.Controller.Destroy()
 
 	// удаление ссылки на провайдер
 	c.provider = nil
 }
 
-// GetAll получение всех сотрудников
-func (c *CEmployee) GetAll() revel.Result {
+// GetAll получение всех проектов
+func (c *CProgect) GetAll() revel.Result {
 	// получение отрудников
-	employees, err := c.provider.GetEmployees()
+	progects, err := c.provider.GetProgects()
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.GetAll : c.provider.GetEmployees, %s\n", err)
+		revel.AppLog.Errorf("CProgect.GetAll : c.provider.GetProgects, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CEmployee.GetAll, employees: %+v\n", employees)
+	revel.AppLog.Debugf("CProgect.GetAll, progects: %+v\n", progects)
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(employees))
+	return c.RenderJSON(Succes(progects))
 }
 
-// GetByID получение сотрудника по id
-func (c *CEmployee) GetByID(id int64) revel.Result {
-	// получение сотрудника
-	employee, err := c.provider.GetEmployeeByID(id)
+// GetByID получение проекта по id
+func (c *CProgect) GetByID(id int64) revel.Result {
+	// получение проекта
+	progect, err := c.provider.GetProgectByID(id)
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.GetByID : c.provider.GetEmployeeByID, %s\n", err)
+		revel.AppLog.Errorf("CProgect.GetByID : c.provider.GetProgectByID, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(employee))
+	return c.RenderJSON(Succes(progect))
 }
 
-// Create создание сотрудника
-func (c *CEmployee) Create() revel.Result {
+// Create создание проекта
+func (c *CProgect) Create() revel.Result {
 	var (
-		employee *entities.Employee // экземпляр сущности для создания
+		progect *entities.Progect // экземпляр сущности для создания
 		err      error              // ошибка в ходе выполнения функции
 	)
 
 	// формирование сущности для создания из post параметров
-	employee, err = c.fetchPostEmployee()
+	progect, err = c.fetchPostProgect()
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Create : c.fetchPostEmployee, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Create : c.fetchPostProgect, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	// создание сущности
-	employee, err = c.provider.CreateEmployee(employee)
+	progect, err = c.provider.CreateProgect(progect)
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Create : c.provider.CreateEmployee, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Create : c.provider.CreateProgect, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CEmployee.Create, employee: %+v\n", employee)
+	revel.AppLog.Debugf("CProgect.Create, progect: %+v\n", progect)
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(employee))
+	return c.RenderJSON(Succes(progect))
 }
 
-// UpdateEmployee изменение сотрудника
-func (c *CEmployee) Update() revel.Result {
+// UpdateProgect изменение проекта
+func (c *CProgect) Update() revel.Result {
 	var (
-		employee *entities.Employee // экземпляр сущности для обновления
+		progect *entities.Progect // экземпляр сущности для обновления
 		err      error              // ошибка в ходе выполнения функции
 	)
 
 	// формирование сущности для обновления из post параметров
-	employee, err = c.fetchPostEmployee()
+	progect, err = c.fetchPostProgect()
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Update : c.fetchPostEmployee, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Update : c.fetchPostProgect, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	// обновление сущности
-	employee, err = c.provider.UpdateEmployee(employee)
+	progect, err = c.provider.UpdateProgect(progect)
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Update : c.provider.UpdateEmployee, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Update : c.provider.UpdateProgect, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CEmployee.Update, employee: %+v\n", employee)
+	revel.AppLog.Debugf("CProgect.Update, progect: %+v\n", progect)
 
 	// рендер положительного результата
-	return c.RenderJSON(Succes(employee))
+	return c.RenderJSON(Succes(progect))
 }
 
-// DeleteEmployee удаление сотрудника
-func (c *CEmployee) Delete() revel.Result {
+// DeleteProgect удаление проекта
+func (c *CProgect) Delete() revel.Result {
 	var (
-		employee *entities.Employee // экземпляр сущности для удаления
+		progect *entities.Progect // экземпляр сущности для удаления
 		err      error              // ошибка в ходе выполнения функции
 	)
 
 	// формирование сущности для удаления из post параметров
-	employee, err = c.fetchPostEmployee()
+	progect, err = c.fetchPostProgect()
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Delete : c.fetchPostEmployee, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Delete : c.fetchPostProgect, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
 
 	// удаление сущности
-	err = c.provider.DeleteEmployee(employee)
+	err = c.provider.DeleteProgect(progect)
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.Delete : c.provider.DeleteEmployee, %s\n", err)
+		revel.AppLog.Errorf("CProgect.Delete : c.provider.DeleteProgect, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-	revel.AppLog.Debugf("CEmployee.Delete , employee: %+v\n", employee)
+	revel.AppLog.Debugf("CProgect.Delete , progect: %+v\n", progect)
 
 	// рендер положительного результата
 	return c.RenderJSON(Succes(nil))
 }
 
-// GetCardBooks получение сотрудника по id
-func (c *CEmployee) GetCardBooks(id int64) revel.Result {
-	// получение читательского билета
-	books, err := c.provider.GetCardBooks(id)
-	if err != nil {
-		revel.AppLog.Errorf("CEmployee.GetCardBooks : c.provider.GetCardBooks, %s\n", err)
-		return c.RenderJSON(Failed(err.Error()))
-	}
-	revel.AppLog.Debugf("CEmployee.GetCardBooks, books: %+v\n", books)
-
-	// рендер положительного результата
-	return c.RenderJSON(Succes(books))
-}
-
-// fetchPostEmployee метод получения сущности из post параметров
-func (c *CEmployee) fetchPostEmployee() (e *entities.Employee, err error) {
+// fetchPostProgect метод получения сущности из post параметров
+func (c *CProgect) fetchPostProgect() (e *entities.Progect, err error) {
 	var (
 		rawRequest []byte // байтовое представление тела запроса
 	)
@@ -189,18 +175,18 @@ func (c *CEmployee) fetchPostEmployee() (e *entities.Employee, err error) {
 	// получение тела запроса
 	rawRequest, err = ioutil.ReadAll(c.Request.GetBody())
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.fetchPostEmployee : ioutil.ReadAll, %s\n", err)
+		revel.AppLog.Errorf("CProgect.fetchPostProgect : ioutil.ReadAll, %s\n", err)
 		return
 	}
 
 	// преобразование тела запроса в структуру сущности
 	err = json.Unmarshal(rawRequest, &e)
 	if err != nil {
-		revel.AppLog.Errorf("CEmployee.fetchPostEmployee : json.Unmarshal, %s\n", err)
+		revel.AppLog.Errorf("CProgect.fetchPostProgect : json.Unmarshal, %s\n", err)
 		return
 	}
 
-	revel.AppLog.Debugf("CEmployee.fetchPostEmployee, employees: %+v\n", e)
+	revel.AppLog.Debugf("CProgect.fetchPostProgect, progects: %+v\n", e)
 
 	return
 }

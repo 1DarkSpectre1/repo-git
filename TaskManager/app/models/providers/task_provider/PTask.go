@@ -1,83 +1,82 @@
-package book_provider
+package task_provider
 
 import (
 	"database/sql"
-	"sample-project/app/helpers"
-	"sample-project/app/models/entities"
-	"sample-project/app/models/mappers"
-
+	"task_manager/app/helpers"
+	"task_manager/app/models/entities"
+	"task_manager/app/models/mappers"
 	"github.com/revel/revel"
 )
 
-// PBook провайдер контроллера книг
-type PBook struct {
-	bookMapper       *mappers.MBook
-	bookStatusMapper *mappers.MBookStatus
+// PTAsk провайдер контроллера книг
+type PTask struct {
+	taskMapper       *mappers.MTask
+	taskStatusMapper *mappers.MTaskStatus
 }
 
 // Init
-func (p *PBook) Init() (err error) {
+func (p *PTask) Init() (err error) {
 	var db *sql.DB // экземпляр подключения к бд
 
 	// получение экземпляра подключения к бд
 	db, err = helpers.GetDBConnection()
 	if err != nil {
-		revel.AppLog.Errorf("PBook.Init : helpers.GetDBConnection, %s\n", err)
+		revel.AppLog.Errorf("PTask.Init : helpers.GetDBConnection, %s\n", err)
 		return err
 	}
 
 	// инициализация маппера книг
-	p.bookMapper = new(mappers.MBook)
-	p.bookMapper.Init(db)
+	p.taskMapper = new(mappers.MTask)
+	p.taskMapper.Init(db)
 
 	// инициализация маппера статусов книг
-	p.bookStatusMapper = new(mappers.MBookStatus)
-	p.bookStatusMapper.Init(db)
+	p.taskStatusMapper = new(mappers.MTaskStatus)
+	p.taskStatusMapper.Init(db)
 
 	return
 }
 
-// GetBookByID метод получения книги по id
-func (p *PBook) GetBookByID(id int64) (b *entities.Book, err error) {
+// GetTAskByID метод получения книги по id
+func (p *PTask) GetTaskByID(id int64) (b *entities.Task, err error) {
 	var (
-		bdbt *mappers.BookDBType
+		bdbt *mappers.TaskDBType
 	)
 
 	// получение данных книги
-	bdbt, err = p.bookMapper.SelectByID(id)
+	bdbt, err = p.taskMapper.SelectByID(id)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.GetBookByID : p.bookMapper.SelectByID, %s\n", err)
+		revel.AppLog.Errorf("PTask.GetTaskByID : p.taskMapper.SelectByID, %s\n", err)
 		return
 	}
 
 	// преобразование к типу сущности
 	b, err = bdbt.ToType()
 	if err != nil {
-		revel.AppLog.Errorf("PBook.GetBookByID : bdbt.ToType, %s\n", err)
+		revel.AppLog.Errorf("PTask.GetTaskByID : bdbt.ToType, %s\n", err)
 		return
 	}
 
 	// получение значения статуса по ключу
-	b.Status, err = p.bookStatusMapper.StatusByID(bdbt.Fk_status)
+	b.Status, err = p.taskStatusMapper.StatusByID(bdbt.Fk_status)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.GetBookByID : p.bookStatusMapper.StatusByID, %s\n", err)
+		revel.AppLog.Errorf("PTask.GetTaskByID : p.taskStatusMapper.StatusByID, %s\n", err)
 		return
 	}
 
 	return
 }
 
-// GetBooks метод получения книг
-func (p *PBook) GetBooks() (bs []*entities.Book, err error) {
+// GetTAsks метод получения книг
+func (p *PTask) GetTasksByProgectID(id int64) (bs []*entities.Task, err error) {
 	var (
-		bdbts []*mappers.BookDBType
-		b     *entities.Book
+		bdbts []*mappers.TaskDBType
+		b     *entities.Task
 	)
 
 	// получение данных книг
-	bdbts, err = p.bookMapper.SelectAll()
+	bdbts, err = p.taskMapper.SelectAllByProgectID(id )
 	if err != nil {
-		revel.AppLog.Errorf("PBook.GetBooks : p.bookMapper.SelectAll, %s\n", err)
+		revel.AppLog.Errorf("PTask.GetTasks : p.taskMapper.SelectAll, %s\n", err)
 		return
 	}
 
@@ -85,93 +84,99 @@ func (p *PBook) GetBooks() (bs []*entities.Book, err error) {
 		// преобразование к типу сущности
 		b, err = bdbt.ToType()
 		if err != nil {
-			revel.AppLog.Errorf("PBook.GetBooks : bdbt.ToType, %s\n", err)
+			revel.AppLog.Errorf("PTask.GetTasks : bdbt.ToType, %s\n", err)
 			return
 		}
 
 		// получение значения статуса по ключу
-		b.Status, err = p.bookStatusMapper.StatusByID(bdbt.Fk_status)
+		b.Status, err = p.taskStatusMapper.StatusByID(bdbt.Fk_status)
 		if err != nil {
-			revel.AppLog.Errorf("PBook.GetBooks : p.bookStatusMapper.StatusByID, %s\n", err)
+			revel.AppLog.Errorf("PTask.GetTasks : p.taskStatusMapper.StatusByID, %s\n", err)
 			return
 		}
-
+		
 		bs = append(bs, b)
 	}
 
 	return
 }
 
-// CreateBook метод создания книги
-func (p *PBook) CreateBook(book *entities.Book) (b *entities.Book, err error) {
+// CreateTAsk метод создания книги
+func (p *PTask) CreateTask(task *entities.Task) (b *entities.Task, err error) {
 	var (
-		bdbt *mappers.BookDBType
+		bdbt *mappers.TaskDBType
 	)
 
 	// инициализация структуры бд из струткуры сущности
-	bdbt, err = bdbt.FromType(*book)
+	bdbt, err = bdbt.FromType(*task)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.CreateBook : bdbt.FromType, %s\n", err)
+		revel.AppLog.Errorf("PTask.CreateTask : bdbt.FromType, %s\n", err)
 		return
 	}
-
+	
+	// получение внешнего ключа на статус
+	bdbt.Fk_status, err = p.taskStatusMapper.IDByStatus(task.Status)
+	if err != nil {
+		revel.AppLog.Errorf("PTask.UpdateTask : p.taskStatusMapper.IDByStatus, %s\n", err)
+		return
+	}
 	// добавление книги
-	book.ID, err = p.bookMapper.Insert(bdbt)
+	task.ID, err = p.taskMapper.Insert(bdbt)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.CreateBook : p.bookMapper.Insert, %s\n", err)
+		revel.AppLog.Errorf("PTask.CreateTask : p.taskMapper.Insert, %s\n", err)
 		return
 	}
 
-	return book, nil
+	return task, nil
 }
 
-// UpdateBook метод обновления книги
-func (p *PBook) UpdateBook(book *entities.Book) (b *entities.Book, err error) {
+// UpdateTAsk метод обновления книги
+func (p *PTask) UpdateTask(task *entities.Task) (b *entities.Task, err error) {
 	var (
-		bdbt *mappers.BookDBType
+		bdbt *mappers.TaskDBType
 	)
 
 	// инициализация структуры бд из струткуры сущности
-	bdbt, err = bdbt.FromType(*book)
+	bdbt, err = bdbt.FromType(*task)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.UpdateBook : bdbt.FromType, %s\n", err)
+		revel.AppLog.Errorf("PTask.UpdateTask : bdbt.FromType, %s\n", err)
 		return
 	}
 
 	// получение внешнего ключа на статус
-	bdbt.Fk_status, err = p.bookStatusMapper.IDByStatus(book.Status)
+	bdbt.Fk_status, err = p.taskStatusMapper.IDByStatus(task.Status)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.UpdateBook : p.bookStatusMapper.IDByStatus, %s\n", err)
+		revel.AppLog.Errorf("PTask.UpdateTask : p.taskStatusMapper.IDByStatus, %s\n", err)
 		return
 	}
 
 	// обновление книги
-	err = p.bookMapper.Update(bdbt)
+	err = p.taskMapper.Update(bdbt)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.UpdateBook : p.bookMapper.Update, %s\n", err)
+		revel.AppLog.Errorf("PTask.UpdateTask : p.taskMapper.Update, %s\n", err)
 		return
 	}
 
-	return book, nil
+	return task, nil
 }
 
-// DeleteBook метод удаления книги
-func (p *PBook) DeleteBook(book *entities.Book) (err error) {
+// DeleteTAsk метод удаления книги
+func (p *PTask) DeleteTask(task *entities.Task) (err error) {
 	var (
-		bdbt *mappers.BookDBType
+		bdbt *mappers.TaskDBType
 	)
 
 	// инициализация структуры бд из струткуры сущности
-	bdbt, err = bdbt.FromType(*book)
+	bdbt, err = bdbt.FromType(*task)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.DeleteBook : bdbt.FromType, %s\n", err)
+		revel.AppLog.Errorf("PTask.DeleteTask : bdbt.FromType, %s\n", err)
 		return
 	}
 
 	// удаление книги
-	err = p.bookMapper.Delete(bdbt)
+	err = p.taskMapper.Delete(bdbt)
 	if err != nil {
-		revel.AppLog.Errorf("PBook.DeleteBook : p.bookMapper.Delete, %s\n", err)
+		revel.AppLog.Errorf("PTask.DeleteTask : p.taskMapper.Delete, %s\n", err)
 		return
 	}
 

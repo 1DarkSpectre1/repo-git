@@ -98,6 +98,18 @@ func (_ tTestRunner) List(
 }
 
 
+type tApp struct {}
+var App tApp
+
+
+func (_ tApp) Index(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("App.Index", args).URL
+}
+
+
 type tCAuth struct {}
 var CAuth tCAuth
 
@@ -135,55 +147,6 @@ func (_ tCAuth) GetCurrentEmployee(
 	args := make(map[string]string)
 	
 	return revel.MainRouter.Reverse("CAuth.GetCurrentEmployee", args).URL
-}
-
-
-type tCBook struct {}
-var CBook tCBook
-
-
-func (_ tCBook) Init(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CBook.Init", args).URL
-}
-
-func (_ tCBook) GetAll(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CBook.GetAll", args).URL
-}
-
-func (_ tCBook) GetByID(
-		id int64,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "id", id)
-	return revel.MainRouter.Reverse("CBook.GetByID", args).URL
-}
-
-func (_ tCBook) Create(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CBook.Create", args).URL
-}
-
-func (_ tCBook) Update(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CBook.Update", args).URL
-}
-
-func (_ tCBook) Delete(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CBook.Delete", args).URL
 }
 
 
@@ -235,15 +198,6 @@ func (_ tCEmployee) Delete(
 	return revel.MainRouter.Reverse("CEmployee.Delete", args).URL
 }
 
-func (_ tCEmployee) GetCardBooks(
-		id int64,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "id", id)
-	return revel.MainRouter.Reverse("CEmployee.GetCardBooks", args).URL
-}
-
 
 type tCError struct {}
 var CError tCError
@@ -254,59 +208,6 @@ func (_ tCError) Unauthorized(
 	args := make(map[string]string)
 	
 	return revel.MainRouter.Reverse("CError.Unauthorized", args).URL
-}
-
-
-type tCEvent struct {}
-var CEvent tCEvent
-
-
-func (_ tCEvent) Init(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CEvent.Init", args).URL
-}
-
-func (_ tCEvent) GetAll(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CEvent.GetAll", args).URL
-}
-
-func (_ tCEvent) GetByBookID(
-		id int64,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "id", id)
-	return revel.MainRouter.Reverse("CEvent.GetByBookID", args).URL
-}
-
-func (_ tCEvent) GetByEmployeeID(
-		id int64,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "id", id)
-	return revel.MainRouter.Reverse("CEvent.GetByEmployeeID", args).URL
-}
-
-func (_ tCEvent) Create(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("CEvent.Create", args).URL
-}
-
-func (_ tCEvent) GetLastForBook(
-		id int64,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "id", id)
-	return revel.MainRouter.Reverse("CEvent.GetLastForBook", args).URL
 }
 
 
@@ -345,6 +246,106 @@ func (_ tCPosition) GetAll(
 	args := make(map[string]string)
 	
 	return revel.MainRouter.Reverse("CPosition.GetAll", args).URL
+}
+
+
+type tCProgect struct {}
+var CProgect tCProgect
+
+
+func (_ tCProgect) Init(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CProgect.Init", args).URL
+}
+
+func (_ tCProgect) GetAll(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CProgect.GetAll", args).URL
+}
+
+func (_ tCProgect) GetByID(
+		id int64,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "id", id)
+	return revel.MainRouter.Reverse("CProgect.GetByID", args).URL
+}
+
+func (_ tCProgect) Create(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CProgect.Create", args).URL
+}
+
+func (_ tCProgect) Update(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CProgect.Update", args).URL
+}
+
+func (_ tCProgect) Delete(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CProgect.Delete", args).URL
+}
+
+
+type tCTask struct {}
+var CTask tCTask
+
+
+func (_ tCTask) Init(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CTask.Init", args).URL
+}
+
+func (_ tCTask) GetAllByIDProgect(
+		id int64,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "id", id)
+	return revel.MainRouter.Reverse("CTask.GetAllByIDProgect", args).URL
+}
+
+func (_ tCTask) GetByID(
+		id int64,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "id", id)
+	return revel.MainRouter.Reverse("CTask.GetByID", args).URL
+}
+
+func (_ tCTask) Create(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CTask.Create", args).URL
+}
+
+func (_ tCTask) Update(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CTask.Update", args).URL
+}
+
+func (_ tCTask) Delete(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("CTask.Delete", args).URL
 }
 
 

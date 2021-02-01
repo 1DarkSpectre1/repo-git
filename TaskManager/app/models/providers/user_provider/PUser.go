@@ -1,11 +1,11 @@
 package user_provider
 
 import (
-	"crypto/md5"
+	//"crypto/md5"
 	"database/sql"
-	"sample-project/app/helpers"
-	"sample-project/app/models/entities"
-	"sample-project/app/models/mappers"
+	"task_manager/app/helpers"
+	"task_manager/app/models/entities"
+	"task_manager/app/models/mappers"
 
 	"github.com/revel/revel"
 )
@@ -55,10 +55,10 @@ func (p *PUser) Validate(user *entities.User) (flag bool, err error) {
 	}
 
 	// шифрация пароля
-	password := md5.Sum([]byte(user.Password))
+	password := user.Password
 
 	// проверка пароля пользователя
-	flag, err = p.userMapper.CheckPassword(udbt, password[:])
+	flag, err = p.userMapper.CheckPassword(udbt, password)
 	if err != nil {
 		revel.AppLog.Errorf("PUser.Validate : p.userMapper.CheckPassword, %s\n", err)
 		return

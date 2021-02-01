@@ -2,9 +2,9 @@ package mappers
 
 import (
 	"database/sql"
-	"Task_manager/app/models/entities"
+	"task_manager/app/models/entities"
 
-	//"github.com/revel/revel"
+	"github.com/revel/revel"
 )
 
 // EmployeeDBType тип сущности "сотрудник" бд
@@ -16,7 +16,6 @@ type EmployeeDBType struct {
 	C_middlename   string // отчество
 	C_phone_number string // телефонный номер
 	C_email        string // почтовый адрес
-	C_is_archive   int64  // признак архивности
 }
 
 // ToType функция преобразования типа бд к типу сущности
@@ -76,7 +75,7 @@ func (m *MEmployee) SelectAll() (es []*EmployeeDBType, err error) {
 			c_phone_number,
 			c_email
 		FROM "task_manager".t_employees
-		WHERE c_is_archive = 0
+		
 		ORDER BY pk_id;
 	`
 
@@ -139,8 +138,7 @@ func (m *MEmployee) SelectByID(id int64) (e *EmployeeDBType, err error) {
 			c_phone_number,
 			c_email
 		FROM "task_manager".t_employees
-		WHERE pk_id = $1 and
-			c_is_archive = 0
+		WHERE pk_id = $1 
 		ORDER BY pk_id;
 	`
 
@@ -179,14 +177,13 @@ func (m *MEmployee) Insert(edbt *EmployeeDBType) (id int64, err error) {
 
 	// запрос
 	query = `
-		INSERT INTO "library".t_employees(
+		INSERT INTO "task_manager".t_employees(
 			fk_position,
 			c_firstname,
 			c_lastname,
 			c_middlename,
 			c_phone_number,
-			c_email,
-			c_is_archive
+			c_email
 		)
 		VALUES(
 			$1,	-- fk_position
@@ -194,8 +191,7 @@ func (m *MEmployee) Insert(edbt *EmployeeDBType) (id int64, err error) {
 			$3,	-- c_lastname
 			$4,	-- c_middlename
 			$5,	-- c_phone_number
-			$6,	-- c_email
-			0	-- c_is_archive
+			$6	-- c_email
 		)
 		returning pk_id;
 	`
@@ -235,7 +231,7 @@ func (m *MEmployee) Update(edbt *EmployeeDBType) (err error) {
 
 	// запрос
 	query = `
-		UPDATE "library".t_employees
+		UPDATE "task_manager".t_employees
 		SET 
 			fk_position = $2,
 			c_firstname = $3,
@@ -264,8 +260,7 @@ func (m *MEmployee) Update(edbt *EmployeeDBType) (err error) {
 
 		revel.AppLog.Errorf("MEmployee.Update : m.db.Exec, %s\n", err)
 		return
-	}
-
+	}  
 	return
 }
 
@@ -277,8 +272,7 @@ func (m *MEmployee) Delete(edbt *EmployeeDBType) (err error) {
 
 	// запрос
 	query = `
-		UPDATE "library".t_employees
-		SET c_is_archive = 1
+	DELETE FROM task_manager.t_employees 
 		WHERE pk_id = $1;
 	`
 

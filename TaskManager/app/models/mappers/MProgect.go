@@ -1,15 +1,16 @@
 package mappers
 
 import (
-	"Task_manager/app/models/entities"
+	"task_manager/app/models/entities"
 	"database/sql"
-	//"github.com/revel/revel"
+
+	"github.com/revel/revel"
 )
 
 // ProgectDBType тип сущности "сотрудник" бд
 type ProgectDBType struct {
 	Pk_id         int64  // идентификатор
-	Fk_Progect    int64  // FK на сотрудника
+	Fk_employee    int64  // FK на сотрудника
 	C_name        string // Название
 	C_description string // Описание
 }
@@ -17,7 +18,7 @@ type ProgectDBType struct {
 // ToType функция преобразования типа бд к типу сущности
 func (dbt *ProgectDBType) ToType() (e *entities.Progect, err error) {
 	e = new(entities.Progect)
-
+	e.Fk_employee=dbt.Fk_employee 
 	e.ID = dbt.Pk_id
 	e.Name = dbt.C_name
 	e.Description = dbt.C_description
@@ -29,8 +30,9 @@ func (dbt *ProgectDBType) ToType() (e *entities.Progect, err error) {
 func (_ *ProgectDBType) FromType(e entities.Progect) (dbt *ProgectDBType, err error) {
 	dbt = &ProgectDBType{
 		Pk_id:         e.ID,
-		C_name:        e.Lastname,
-		C_description: e.Firstname,
+		Fk_employee:   e.Fk_employee,
+		C_name:        e.Name,
+		C_description: e.Description,
 	}
 
 	return
@@ -57,14 +59,10 @@ func (m *MProgect) SelectAll() (es []*ProgectDBType, err error) {
 	query = `
 		SELECT
 			pk_id,
-			fk_position,
-			c_firstname,
-			c_lastname,
-			c_middlename,
-			c_phone_number,
-			c_email
-		FROM "library".t_progects
-		WHERE c_is_archive = 0
+			fk_employee,
+			c_name,
+			c_description		
+		FROM "task_manager".t_progects
 		ORDER BY pk_id;
 	`
 
@@ -87,14 +85,11 @@ func (m *MProgect) SelectAll() (es []*ProgectDBType, err error) {
 
 		// считывание строки выборки
 		err = rows.Scan(
-			&e.Pk_id,          // pk_id
-			&e.Fk_position,    // fk_position
-			&e.C_firstname,    // c_firstname
-			&e.C_lastname,     // c_lastname
-			&e.C_middlename,   // c_middlename
-			&e.C_phone_number, // c_phone_number
-			&e.C_email,        // c_email
-		)
+			&e.Pk_id,          
+			&e.Fk_employee,   
+			&e.C_name,    
+			&e.C_description,     
+			)
 		if err != nil {
 			revel.AppLog.Errorf("MProgect.SelectAll : rows.Scan, %s\n", err)
 			continue
@@ -117,18 +112,14 @@ func (m *MProgect) SelectByID(id int64) (e *ProgectDBType, err error) {
 	e = new(ProgectDBType)
 
 	// запрос
-	query = `
-		SELECT
-			pk_id,
-			fk_position,
-			c_firstname,
-			c_lastname,
-			c_middlename,
-			c_phone_number,
-			c_email
-		FROM "library".t_progects
-		WHERE pk_id = $1 and
-			c_is_archive = 0
+	query = `	
+	SELECT
+		pk_id,
+		fk_employee,
+		c_name,
+		c_description			
+	FROM "task_manager".t_progects3
+		WHERE pk_id = $1
 		ORDER BY pk_id;
 	`
 
@@ -138,12 +129,9 @@ func (m *MProgect) SelectByID(id int64) (e *ProgectDBType, err error) {
 	// считывание строки выборки
 	err = row.Scan(
 		&e.Pk_id,          // pk_id
-		&e.Fk_position,    // fk_position
-		&e.C_firstname,    // c_firstname
-		&e.C_lastname,     // c_lastname
-		&e.C_middlename,   // c_middlename
-		&e.C_phone_number, // c_phone_number
-		&e.C_email,        // c_email
+		&e.Fk_employee,    // fk_position
+		&e.C_name,    	   // c_name
+		&e.C_description,  // c_description
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -167,35 +155,24 @@ func (m *MProgect) Insert(edbt *ProgectDBType) (id int64, err error) {
 
 	// запрос
 	query = `
-		INSERT INTO "library".t_Progects(
-			fk_position,
-			c_firstname,
-			c_lastname,
-			c_middlename,
-			c_phone_number,
-			c_email,
-			c_is_archive
+		INSERT INTO "task_manager".t_Progects(
+			fk_employee,
+			c_name,
+			c_description
 		)
 		VALUES(
-			$1,	-- fk_position
-			$2,	-- c_firstname
-			$3,	-- c_lastname
-			$4,	-- c_middlename
-			$5,	-- c_phone_number
-			$6,	-- c_email
-			0	-- c_is_archive
+			$1,	-- fk_employee
+			$2,	-- c_name
+			$3	-- c_description
 		)
 		returning pk_id;
 	`
 
 	// выполнение запроса
 	row = m.db.QueryRow(query,
-		edbt.Fk_position,    // fk_position
-		edbt.C_firstname,    // c_firstname
-		edbt.C_lastname,     // c_lastname
-		edbt.C_middlename,   // c_middlename
-		edbt.C_phone_number, // c_phone_number
-		edbt.C_email,        // c_email
+		edbt.Fk_employee,    // fk_position
+		edbt.C_name,    	 // c_firstname
+		edbt.C_description,  // c_lastname
 	)
 
 	// считывание id
@@ -223,26 +200,20 @@ func (m *MProgect) Update(edbt *ProgectDBType) (err error) {
 
 	// запрос
 	query = `
-		UPDATE "library".t_Progects
+		UPDATE "task_manager".t_Progects
 		SET 
-			fk_position = $2,
-			c_firstname = $3,
-			c_lastname = $4,
-			c_middlename = $5,
-			c_phone_number = $6,
-			c_email = $7
+			fk_employee = $2,
+			c_name = $3,
+			c_description = $4
 		WHERE pk_id = $1;
 	`
 
 	// выполнение запроса
 	_, err = m.db.Exec(query,
 		edbt.Pk_id,          // pk_id
-		edbt.Fk_position,    // fk_position
-		edbt.C_firstname,    // c_firstname
-		edbt.C_lastname,     // c_lastname
-		edbt.C_middlename,   // c_middlename
-		edbt.C_phone_number, // c_phone_number
-		edbt.C_email,        // c_email
+		edbt.Fk_employee,    // fk_employee
+		edbt.C_name,    // c_name
+		edbt.C_description,     // c_description
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -265,8 +236,7 @@ func (m *MProgect) Delete(edbt *ProgectDBType) (err error) {
 
 	// запрос
 	query = `
-		UPDATE "library".t_Progects
-		SET c_is_archive = 1
+	DELETE FROM task_manager.t_progects 
 		WHERE pk_id = $1;
 	`
 

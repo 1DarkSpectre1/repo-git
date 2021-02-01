@@ -2,9 +2,9 @@ package mappers
 
 import (
 	"database/sql"
-//	"sample-project/app/models/entities"
+	"task_manager/app/models/entities"
 
-//	"github.com/revel/revel"
+	"github.com/revel/revel"
 )
 
 // UserDBType тип сущности "пользователь" бд
@@ -17,10 +17,8 @@ type UserDBType struct {
 // ToType функция преобразования типа бд к типу сущности
 func (dbt *UserDBType) ToType() (u *entities.User, err error) {
 	u = new(entities.User)
-
 	u.ID = dbt.Pk_id
 	u.Login = dbt.C_login
-
 	return
 }
 
@@ -45,42 +43,6 @@ func (m *MUser) Init(db *sql.DB) {
 	m.db = db
 }
 
-// Inser добавление пользователя
-func (m *MUser) Insert(u *UserDBType, password string) (id int64, err error) {
-	var (
-		query string   // строка запроса
-		row   *sql.Row // выборка данных
-	)
-
-	// запрос
-	query = `
-		INSERT INTO "library".t_users(
-			c_login,
-			c_password
-		)
-		VALUES(
-			$1,
-			$2
-		);	
-	`
-
-	// выполнение запроса
-	row = m.db.QueryRow(query, u.Pk_id, password)
-
-	// считывание строки выборки
-	err = row.Scan(&id)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			err = nil
-			return
-		}
-
-		revel.AppLog.Errorf("MUser.Insert : row.Scan, %s\n", err)
-		return
-	}
-
-	return
-}
 
 // SelectUserByID получение пользователя по id
 func (m *MUser) SelectUserByID(id int64) (u *UserDBType, err error) {
@@ -96,7 +58,7 @@ func (m *MUser) SelectUserByID(id int64) (u *UserDBType, err error) {
 			pk_id,
 			fk_employee,
 			c_login
-		FROM "library".t_users
+		FROM "task_manager".t_users
 		WHERE pk_id = $1
 		ORDER BY pk_id;
 	`
@@ -134,7 +96,7 @@ func (m *MUser) SelectUserByLogin(login string) (u *UserDBType, err error) {
 			pk_id,
 			fk_employee,
 			c_login
-		FROM "library".t_users
+		FROM "task_manager".t_users
 		WHERE c_login = $1
 		ORDER BY pk_id;
 	`
@@ -158,7 +120,7 @@ func (m *MUser) SelectUserByLogin(login string) (u *UserDBType, err error) {
 }
 
 // CheckPassword проверка пароля пользователя
-func (m *MUser) CheckPassword(user *UserDBType, password []byte) (f bool, err error) {
+func (m *MUser) CheckPassword(user *UserDBType, password string) (f bool, err error) {
 	var (
 		query string                        // строка запроса
 		row   *sql.Row                      // выборка данных
@@ -169,7 +131,7 @@ func (m *MUser) CheckPassword(user *UserDBType, password []byte) (f bool, err er
 	query = `
 		SELECT
 			pk_id
-		FROM "library".t_users
+		FROM "task_manager".t_users
 		WHERE
 			pk_id = $1 and
 			c_login = $2 and

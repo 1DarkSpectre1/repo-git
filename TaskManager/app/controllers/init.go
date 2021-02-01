@@ -21,8 +21,8 @@ func init() {
 
 	// Инициализация интерцепторов
 	revel.InterceptMethod((*CEmployee).Init, revel.BEFORE)
-	revel.InterceptMethod((*CBook).Init, revel.BEFORE)
-	revel.InterceptMethod((*CEvent).Init, revel.BEFORE)
+	revel.InterceptMethod((*CProgect).Init, revel.BEFORE)
+	revel.InterceptMethod((*CTask).Init, revel.BEFORE)
 	revel.InterceptMethod((*CPosition).Init, revel.BEFORE)
 	revel.InterceptMethod((*CAuth).Init, revel.BEFORE)
 }

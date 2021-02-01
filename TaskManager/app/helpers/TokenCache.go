@@ -2,8 +2,8 @@ package helpers
 
 import (
 	"errors"
-	"sample-project/app/models/entities"
 	"sync"
+	"task_manager/app/models/entities"
 	"time"
 
 	"github.com/revel/revel"

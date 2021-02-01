@@ -6,7 +6,7 @@ package main
 
 import (
 	"flag"
-	"sample-project/app/tmp/run"
+	"task_manager/app/tmp/run"
 	"github.com/revel/revel"
 )
 

@@ -4,6 +4,7 @@ import (
 	"github.com/revel/revel"
 )
 
+
 var (
 	// AppVersion revel app version (ldflags)
 	AppVersion string

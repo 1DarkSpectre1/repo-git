@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"sample-project/app/helpers"
-	"sample-project/app/models/providers/position_provider"
+	"task_manager/app/helpers"
+	"task_manager/app/models/providers/position_provider"
 
 	"github.com/revel/revel"
 )

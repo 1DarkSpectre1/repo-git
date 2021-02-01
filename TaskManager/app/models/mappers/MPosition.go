@@ -2,9 +2,8 @@ package mappers
 
 import (
 	"database/sql"
-	//"sample-project/app/models/entities"
-
-	//"github.com/revel/revel"
+	"task_manager/app/models/entities"	
+	"github.com/revel/revel"
 )
 
 // PositionDBType тип сущности "событие" бд
@@ -55,7 +54,7 @@ func (m *MPosition) SelectAll() (pdbts []*PositionDBType, err error) {
 		SELECT
 			pk_id,
 			c_name
-		FROM "library".ref_positions
+		FROM "task_manager".ref_positions
 		ORDER BY pk_id;	
 	`
 
@@ -101,7 +100,7 @@ func (m *MPosition) PositionNameByID(id int64) (positionName string, err error) 
 	query = `
 		SELECT
 			c_name
-		FROM "library".ref_positions
+		FROM "task_manager".ref_positions
 		WHERE pk_id = $1
 		ORDER BY pk_id;
 	`
@@ -135,7 +134,7 @@ func (m *MPosition) IDByPositionName(positionName string) (id int64, err error) 
 	query = `
 		SELECT
 			pk_id
-		FROM "library".ref_positions
+		FROM "task_manager".ref_positions
 		WHERE c_name = $1
 		ORDER BY pk_id;
 	`

@@ -2,23 +2,46 @@ package mappers
 
 import (
 	"database/sql"
-//	"sample-project/app/models/entities"
+	"task_manager/app/models/entities"
 
-//	"github.com/revel/revel"
+	"github.com/revel/revel"
 )
+type TaskStatusDBType struct {
+	Pk_id  int64  // идентификатор
+	C_name string // название должности
+}
 
-// MBookStatus маппер стутусов книг
-type MBookStatus struct {
+// ToType функция преобразования типа бд к типу сущности
+func (dbt *TaskStatusDBType) ToType() (p *entities.TaskStatus, err error) {
+	p = new(entities.TaskStatus)
+
+	p.ID = dbt.Pk_id
+	p.Name = dbt.C_name
+
+	return
+}
+
+// FromType функция преобразования типа бд из типа сущности
+func (_ *TaskStatusDBType) FromType(p *entities.TaskStatus) (dbt *TaskStatusDBType, err error) {
+	dbt = &TaskStatusDBType{
+		Pk_id:  p.ID,
+		C_name: p.Name,
+	}
+
+	return
+}
+// MTaskStatus маппер стутусов книг
+type MTaskStatus struct {
 	db *sql.DB
 }
 
 // Init
-func (m *MBookStatus) Init(db *sql.DB) {
+func (m *MTaskStatus) Init(db *sql.DB) {
 	m.db = db
 }
 
 // StatusByID получение статуса книги по id
-func (m *MBookStatus) StatusByID(id int64) (status entities.BookStatus, err error) {
+func (m *MTaskStatus) StatusByID(id int64) (status string, err error) {
 	var (
 		query string   // строка запроса
 		row   *sql.Row // выборка данных
@@ -27,8 +50,8 @@ func (m *MBookStatus) StatusByID(id int64) (status entities.BookStatus, err erro
 	// запрос
 	query = `
 		SELECT
-			c_value
-		FROM "library".ref_statuses
+			c_name
+		FROM "task_manager".ref_statuses
 		WHERE pk_id = $1;
 	`
 
@@ -43,7 +66,7 @@ func (m *MBookStatus) StatusByID(id int64) (status entities.BookStatus, err erro
 			return
 		}
 
-		revel.AppLog.Errorf("MBookStatus.StatusByID : row.Scan, %s\n", err)
+		revel.AppLog.Errorf("MTaskStatus.StatusByID : row.Scan, %s\n", err)
 		return
 	}
 
@@ -51,20 +74,20 @@ func (m *MBookStatus) StatusByID(id int64) (status entities.BookStatus, err erro
 }
 
 // IDByStatus получение id статуса по значению
-func (m *MBookStatus) IDByStatus(status entities.BookStatus) (id int64, err error) {
+func (m *MTaskStatus) IDByStatus(status string) (id int64, err error) {
 	var (
 		query string   // строка запроса
 		row   *sql.Row // выборка данных
 	)
 
-	revel.AppLog.Debugf("MBookStatus.IDByStatus, status: %+v\n", status)
+	revel.AppLog.Debugf("MTaskStatus.IDByStatus, status: %+v\n", status)
 
 	// запрос
 	query = `
 		SELECT
 			pk_id
-		FROM "library".ref_statuses
-		WHERE c_value = $1;
+		FROM "task_manager".ref_statuses
+		WHERE c_name = $1;
 	`
 
 	// выполнение запроса
@@ -78,7 +101,7 @@ func (m *MBookStatus) IDByStatus(status entities.BookStatus) (id int64, err erro
 			return
 		}
 
-		revel.AppLog.Errorf("MBookStatus.IDByStatus : row.Scan, %s\n", err)
+		revel.AppLog.Errorf("MTaskStatus.IDByStatus : row.Scan, %s\n", err)
 		return
 	}
 

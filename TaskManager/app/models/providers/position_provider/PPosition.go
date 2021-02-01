@@ -2,9 +2,9 @@ package position_provider
 
 import (
 	"database/sql"
-	"sample-project/app/helpers"
-	"sample-project/app/models/entities"
-	"sample-project/app/models/mappers"
+	"task_manager/app/helpers"
+	"task_manager/app/models/entities"
+	"task_manager/app/models/mappers"
 
 	"github.com/revel/revel"
 )
