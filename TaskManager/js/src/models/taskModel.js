@@ -8,7 +8,7 @@ class TaskModel extends Model {
 
     // получение всех книг
     getTasksByIDProgect(id) {
-        return this.get(`/task/all${id}`)
+        return this.get(`/task/all/progect/${id}`)
     }
 
     // получение книги по ее ID
@@ -18,22 +18,27 @@ class TaskModel extends Model {
 
     // создание книги
     createTask(task) {
-        
-        
+        task.sch_hours=+task.sch_hours
+        task.fact_hours=+task.fact_hours
+        task.id=task.ID
         return this.post('/task/create', task)
     }
 
     // изменение книги
     updateTask(task) {
-        
-        
+        task.sch_hours=+task.sch_hours
+        task.fact_hours=+task.fact_hours
+        task.fk_progect=+task.fk_progect
+        task.fk_employee=+task.fk_employee
+        task.id=task.ID
         return this.post('/task/update', task)
     }
 
     // удаление книги
     deleteTask(task) {
-        
-        
+        task.sch_hours=+task.sch_hours
+        task.fact_hours=+task.fact_hours
+        task.id=task.ID
         return this.post('/task/delete', task)
     }
 }

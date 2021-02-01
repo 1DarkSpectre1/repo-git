@@ -52,25 +52,25 @@ export class CTaskWindow {
 
             switch (this.type) {
                 case TASK_WINDOW_TYPE.create:
-                   // taskModel.createBook(this.fetch()).then(() => {
-                  //      this.onChange()
+                    taskModel.createTask(this.fetch()).then(() => {
+                        this.onChange()
                   webix.message("Создание задачи")
                         this.hide()
-                   // })
+                    })
                     break;
                 case TASK_WINDOW_TYPE.update:
-                   // taskModel.updateBook(this.fetch()).then(() => {
-                   //     this.onChange()
-                   webix.message("Изменение задачи")
+                    taskModel.updateTask(this.fetch()).then(() => {
+                        this.onChange()
+                  // webix.message("Изменение задачи")
                         this.hide()
-                  //  })
+                    })
                     break;
                 case TASK_WINDOW_TYPE.delete:
-                 //   taskModel.deleteBook(this.fetch()).then(() => {
-                  //      this.onChange()
-                  webix.message("Удаление задачи")
+                    taskModel.deleteTask(this.fetch()).then(() => {
+                        this.onChange()
+                 // webix.message("Удаление задачи")
                         this.hide()
-                  //  })
+                    })
                     break;
             }
         })
@@ -151,7 +151,6 @@ export class CTaskWindow {
 
         // удаление пробелов в полях формы
         this.view.formfields.name.setValue(this.view.formfields.name.getValue().trim())
-        this.view.formfields.employee.setValue(this.view.formfields.employee.getValue().trim())
         this.view.formfields.sch_hours.setValue(this.view.formfields.sch_hours.getValue().trim())
         this.view.formfields.fact_hours.setValue(this.view.formfields.fact_hours.getValue().trim())
 

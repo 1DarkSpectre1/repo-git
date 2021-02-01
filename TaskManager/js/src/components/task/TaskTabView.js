@@ -25,7 +25,7 @@ export function TaskTabView() {
         ]
     }
 }
-export function TaskTabContextMenu() {
+export function TaskTabContextMenu(employees) {
     return {
         view: 'contextmenu',
         id: 'taskTabDatatableContextMenu',
@@ -33,7 +33,7 @@ export function TaskTabContextMenu() {
             {
                 value: TASK_CONTEXT_MENU.give,
                 id: TASK_CONTEXT_MENU.give,
-                submenu: employ,
+                submenu: employees,
             },
             TASK_CONTEXT_MENU.edit,
             TASK_CONTEXT_MENU.remove

@@ -36,7 +36,7 @@ export default function TaskWindowView(type) {
                 {
                     view: 'text',
                     id: 'taskWindowFormName',
-                    label: 'Описание',
+                    label: 'Название',
                     name: 'name',
                     required: true,
                     labelWidth: 150,
@@ -46,9 +46,8 @@ export default function TaskWindowView(type) {
                     id: 'taskWindowFormEmployee',
                     label: 'Сотрудник',
                     name: 'employee',
-                    required: true,
                     labelWidth: 150,
-                    options: employ
+                    options:[]
                 },
                 {
                     view: 'text',

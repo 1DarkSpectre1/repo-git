@@ -1,7 +1,7 @@
 import { EmployeeTabView,EmployeeTabContextMenu,  TabControllsView } from './EmployeeTabView.js';
 import { CEmployeeWindow, EMPLOYEE_WINDOW_TYPE } from './employeeWindow/CEmployeeWindow.js';
 import { Employee } from '../../models/entities/employee.js';
-//import employeeModel from '../../models/employeeModel.js';
+import employeeModel from '../../models/employeeModel.js';
 
 // класс таба 'Сотрудники'
 export class CEmployeeTab {
@@ -9,8 +9,7 @@ export class CEmployeeTab {
         this.refreshControlls   // функция обновления элементов управления в header'е
         this.view               // объект для быстрого доступа к представлениям
         this.window             // экземпляр окна для работы с книгами
-        this.libraryCard        // экземпляр окна читательского билета
-    }
+       }
 
     // метод инициализации компонента
     init( refreshControlls) {
@@ -52,11 +51,6 @@ export class CEmployeeTab {
             }
         }
 
-    //     // читательский билет сотрудника
-    //     this.view.btns.libraryCardBtn.attachEvent('onItemClick', () => {
-    //         this.card()
-    //     })
-
         // создание сотрудника
         this.view.btns.createBtn.attachEvent('onItemClick', () => {
             this.createEmployee()
@@ -77,7 +71,7 @@ export class CEmployeeTab {
         // прикрепление контекстного меню к таблице
         this.view.datatableContextMenu.attachTo(this.view.datatable)
     //     // загрузка первичных данных в таблицу
-    //     this.refreshTable()
+         this.refreshTable()
 
        // обработка события нажатия на пункт контекстного меню
      this.view.datatableContextMenu.attachEvent('onMenuItemClick', (id) => {
@@ -104,16 +98,16 @@ export class CEmployeeTab {
 
     // функция обновления таблицы сотрудников
     refreshTable() {
-     //   if (employees) {
-            this.view.datatable.clearAll()
-            this.view.datatable.parse(employees)
-          //  return
-        // } else {
-        //     employeeModel.getEmployees().then((employees) => {
-        //         this.view.datatable.clearAll()
-        //         this.view.datatable.parse(employees)
-        //     })
-        // }
+        // if (employees) {
+        //     this.view.datatable.clearAll()
+        //     this.view.datatable.parse(employees)
+        //     return
+       //  } else {
+            employeeModel.getEmployees().then((employees) => {
+                this.view.datatable.clearAll()
+                this.view.datatable.parse(employees)
+            })
+       // }
     }
 
     // // метод отображения таба с фильтрацией по сотруднику
@@ -183,19 +177,19 @@ export class CEmployeeTab {
             webix.message('Выделите строку')
             return
         }
-        if (!selected.ID) {
-            console.error('Incorrect ID of item:', selected.ID)
+        if (!selected.id) {
+            console.error('Incorrect ID of item:', selected.id)
             return
         }
-        // employeeModel.getEmployeeByID(selected.ID).then((employee) => {
-        //     // проверка наличия данных
-        //     if (!employee) {
-        //         return
-        //     }
+        employeeModel.getEmployeeByID(selected.ID).then((employee) => {
+            // проверка наличия данных
+            if (!employee) {
+                return
+            }
 
-            this.window.parse(selected)
+            this.window.parse(employee)
             this.window.switch(EMPLOYEE_WINDOW_TYPE.update)
-       // })
+        })
     }
 
     // функция удаления сотрудника
@@ -207,19 +201,19 @@ export class CEmployeeTab {
             webix.message('Выделите строку')
             return
         }
-        if (!selected.ID) {
-            console.error('Incorrect ID of item:', selected.ID)
+        if (!selected.id) {
+            console.error('Incorrect ID of item:', selected.id)
             return
         }
-        // employeeModel.getEmployeeByID(selected.ID).then((employee) => {
-        //     // проверка наличия данных
-        //     if (!employee) {
-        //         return
-        //     }
+         employeeModel.getEmployeeByID(selected.ID).then((employee) => {
+             // проверка наличия данных
+             if (!employee) {
+                 return
+             }
 
-            this.window.parse(selected)
+            this.window.parse(employee)
             this.window.switch(EMPLOYEE_WINDOW_TYPE.delete)
-      //  })
+        })
     }
 }
 

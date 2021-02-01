@@ -12,10 +12,11 @@ export function ProgectTabView() {
                 select: true,
                 columns: [
                     { id: 'ID', header: ['', { content: 'textFilter' }], hidden: true },
-                    { id: 'name', header: ['Описание', { content: 'textFilter' }], sort: 'string', fillspace: true, },
+                    { id: 'name', header: ['Название', { content: 'textFilter' }], sort: 'string', fillspace: true, },
+                    { id: 'description', header: ['Описание', { content: 'textFilter' }], sort: 'string', fillspace: true, },
                     { id: 'employee', header: ['Создатель проекта', { content: 'textFilter' }], sort: 'string', fillspace: true, },
                 ],
-                data: progects,
+                data: [],
                 onContext: {},
             },
         ]

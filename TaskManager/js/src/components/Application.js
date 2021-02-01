@@ -1,5 +1,7 @@
 
 import WorkedPlaceView from './ApplicationView.js'
+import { deleteCookie } from '../../helpers/cookies.js'
+import { checkAuth } from '../../helpers/checkAuth.js'
 import { CEmployeeTab } from './employee/CEmployeeTab.js'
 import { CProgectTab } from './progect/CProgectTab.js'
 import { CTaskTab } from './task/CTaskTab.js'
@@ -17,17 +19,17 @@ export class Application {
         this.mainWindow = new CMainWindow()    // окно входа в приложение
     }
     init() {
-        // // инициализация компонента информации о пользователе
-        this.userInfo.init(()=>{this.onLogout_()})
-        // this.userInfo.init(
-        //     () => {
-        //         deleteCookie('auth-token')
-        //         location.replace('/user/logout')
-        //     }, // onLogout
-        // )
-        // инициализация компонента вкладки книг
+         // инициализация компонента информации о пользователе
+        this.userInfo.init(
+            () => {
+                deleteCookie('auth-token')
+                location.replace('/user/logout')
+             }, // onLogout
+         )
+         // инициализация компонента вкладки книг
         this.taskTab.init(
             (config) => { this.refreshControlls(config) }, // refreshControlls
+            
         )
         // инициализация компонента вкладки сотрудников
         this.employeeTab.init(
@@ -36,12 +38,15 @@ export class Application {
         // инициализация компонента вкладки событий
         this.progectTab.init(
             (config) => { this.refreshControlls(config) }, // refreshControlls
+            ()=>{this.taskTab.refreshTable()},
+            
         )
+        
         // инициализация компонента окна входа в приложение
-          this.mainWindow.init(false)
-        //this.mainWindow.init(
-       //      () => { location.replace('/') }, // onLogin
-       //  )
+      //    this.mainWindow.init(false)
+        this.mainWindow.init(
+            () => { location.replace('/') }, // onLogin
+        )
     }
     // метод отрисовки главной конфигурации представления
     config() {
@@ -50,14 +55,6 @@ export class Application {
         return WorkedPlaceView(this.taskTab, this.employeeTab, this.progectTab, this. userInfo)
     }
 
-    //////////////////////////////////
-    onLogout_(){
-        
-        
-        this.mainWindow.init(false)
-        this.mainWindow.switch(this.view.workedPlace)
-    }
-    ////////////////////////////////
     attachEvents() {
         this.view = {
             tabbar: $$('main-tabbar'),
@@ -71,8 +68,8 @@ export class Application {
         // вызываются через проверку авторизации
         // если клиент не авторизован, то эти
         // компоненты не будут отрисованы
-        // checkAuth((isAuth) => {
-        //     if (isAuth) {
+        checkAuth((isAuth) => {
+            if (isAuth) {
 
 
                  // отрисовать рабочее пространство
@@ -102,19 +99,17 @@ export class Application {
                       }
                     
                 )
-        //         // выделить таб книг
-        //         this.dispatch(APP_TAB.booksTab)
-        //     } else {
-        //         this.view.workedPlace.hide()
-        //     }
-        // })
+            } else {
+                this.view.workedPlace.hide()
+            }
+         })
 
         // вызов обработки событий окна входа в приложение
         this.mainWindow.attachEvents( this.view.workedPlace)
 
         // первоночальное состояние приложения
-        // this.view.workedPlace.hide()
-        // this.mainWindow.switch(this.view.workedPlace)
+         this.view.workedPlace.hide()
+         this.mainWindow.switch(this.view.workedPlace)
     }
    
 

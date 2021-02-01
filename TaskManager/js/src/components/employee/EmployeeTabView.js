@@ -19,7 +19,7 @@ export function EmployeeTabView() {
                     { id: 'phone_number', header: ['Телефонный номер', { content: 'textFilter' }], sort: 'string', fillspace: true, },
                     { id: 'email', header: ['Email', { content: 'textFilter' }], sort: 'string', fillspace: true, },
                 ],
-                data: employees,
+                data: [],
                 onContext: {},
             },
         ]

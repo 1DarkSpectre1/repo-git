@@ -41,34 +41,36 @@ export class CMainWindow {
             user.password = this.view.form.password.getValue()
 
 
-            if((user.login=="1")&&(user.password=="1"))
-            this.onLogin=true
-            else
-            webix.message('Логин: 1 Пароль: 1')
-            this.switch(workedPlace)
-            // авторизация пользователя
-            // authModel.login(user).then((isValid) => {
-            //     if (isValid === true) {
-            //         this.switch()
-            //         this.onLogin()
-            //     }
-            // })
+            // if((user.login=="1")&&(user.password=="1"))
+            // this.onLogin=true
+            // else
+            // webix.message('Логин: 1 Пароль: 1')
+            // this.switch(workedPlace)
+            //авторизация пользователя
+            authModel.login(user).then((isValid) => {
+                if (isValid === true) {
+                    this.switch()
+                    this.onLogin()
+                }
+                else {
+                    webix.message('Неверный логин или пароль')
+                }
+            })
         })
     }
 
     // метод переключения состояния окна входа в приложение
     // результат выполнения функции зависит от авторизованности пользователя
-    switch(workedPlace) {
+    switch() {
 
-        //checkAuth((isAuthorize) => {
-            if (this.onLogin) {
+        checkAuth((isAuthorize) => {
+            if (isAuthorize) {
                 this.hide()
-                workedPlace.show()
+                
             } else {
                this.show()
-               workedPlace.hide()
             }
-        //})
+        })
     }
 
     // метод отображения окна

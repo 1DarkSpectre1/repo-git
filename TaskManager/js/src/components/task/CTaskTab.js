@@ -1,7 +1,7 @@
 import { TaskTabView,TaskTabContextMenu,  TabControllsView } from './TaskTabView.js'
 import { CTaskWindow, TASK_WINDOW_TYPE } from './taskWindow/CTaskWindow.js'
 import taskModel from '../../models/taskModel.js'
-// import employeeModel from '../../models/employeeModel.js'
+ import employeeModel from '../../models/employeeModel.js'
  import { Task, TASK_STATUS } from '../../models/entities/task.js'
 
 // класс таба 'Задачи'
@@ -30,7 +30,7 @@ export class CTaskTab {
     config() {
         // т.к. window и popup расположены не в дереве приложения, а поверх слоев, его нужно отрисовывать отдельно
         webix.ui(this.window.config())
-        webix.ui(TaskTabContextMenu())
+        webix.ui(TaskTabContextMenu(this.names))
 
         // вызов функции представления
         return TaskTabView()
@@ -45,6 +45,7 @@ export class CTaskTab {
     attachEvents() {
         // инициализация используемых представлений
         this.view = {
+            progectdatatable:$$('progectTabDatatable'),
             datatable: $$('taskTabDatatable'),
             datatableContextMenu: $$('taskTabDatatableContextMenu'),
             controlls: $$('tasktab-controlls'),
@@ -70,17 +71,17 @@ export class CTaskTab {
             this.deleteTask()
         })
 
-//         // отложенное заполнение массива сотрудников в сабменю
-//         employeeModel.getEmployees().then((employees) => {
-//             // проверка наличия данных
-//             if (!employees) {
-//                 return
-//             }
+        // отложенное заполнение массива сотрудников в сабменю
+        employeeModel.getEmployees().then((employees) => {
+            // проверка наличия данных
+            if (!employees) {
+                return
+            }
 
-//             employees.map((employee) => {
-//                 this.names.push({ ID: employee.ID, value: `${employee.lastname} ${employee.firstname}` })
-//             })
-//         })
+            employees.map((employee) => {
+                this.names.push({ ID: employee.ID, value: `${employee.lastname} ${employee.firstname}` })
+            })
+        })
 
          // инициализация обработчиков событий модального окна
          this.window.attachEvents()
@@ -121,8 +122,8 @@ export class CTaskTab {
                     webix.message('Выделите строку')
                     return
                 }
-                if (!task.ID) {
-                    console.error('Incorrect ID of item:', task.ID)
+                if (!task.id) {
+                    console.error('Incorrect ID of item:', task.id)
                     return
                 }
 
@@ -154,8 +155,8 @@ export class CTaskTab {
             webix.message('Выделите строку')
             return
         }
-        if (!task.ID) {
-            console.error('Incorrect ID of item:', task.ID)
+        if (!task.id) {
+            console.error('Incorrect ID of item:', task.id)
             return
         }
         
@@ -167,33 +168,36 @@ export class CTaskTab {
         // }
 
         // eventModel.createGiveEvent(task.ID, employee.ID).then(() => {
-             this.refreshTable()
+           //  this.refreshTable()
         // })
     }
-
+    
     // функция обновления таблицы книг
     refreshTable() {
-        // if (tasks) {
+        var selected =this.view.progectdatatable.getSelectedItem()
+         if (!selected) {
          //   this.view.datatable.clearAll()
          //   this.view.datatable.parse(tasks)
-        //     return
-        // } else {
-           
-       // taskModel.getTasks().then((tasks) => {
-        //         // проверка наличия данных
-        //         if (tasks) {
-        //             // преобразование даты издания
-        //             tasks.map((task) => {
-        //                 task.year = new Date(task.year)
-        //             })
-        //         }
+             return
+         } else {
+          
+       taskModel.getTasksByIDProgect(selected.ID).then((tasks) => {
+                // заполнение таблицы окна данными книги
+                if (tasks) {
+                    tasks.forEach(task => {
+                        task.fk_progect=selected.ID
+                        employeeModel.getEmployeeByID(task.fk_employee).then((employee)=>{
+                            task.employee=`${employee.lastname} ${employee.firstname}`
+                        })
+                    });
+                }
 
-        //         // заполнение таблицы окна данными книги
                  this.view.datatable.clearAll()
                  this.view.datatable.parse(tasks)
-        //    })
-        // }
+        })
     }
+}
+    
 
 //     // метод отображения таба с фильтрацией по книге
 //     showByTaskID(taskID) {

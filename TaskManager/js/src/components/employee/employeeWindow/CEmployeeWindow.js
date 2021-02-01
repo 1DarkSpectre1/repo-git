@@ -40,15 +40,15 @@ export class CEmployeeWindow {
         }
 
         //подгрузка должностей
-        // positionModel.getPositions().then((positions) => {
-        //     positions.map((position) => {
-        //         position.id = position.name
-        //         position.value = position.name
-        //     })
+        positionModel.getPositions().then((positions) => {
+            positions.map((position) => {
+                position.id = position.name
+                position.value = position.name
+            })
 
              this.view.formfields.position.define('options', positions)
              this.view.formfields.position.refresh()
-        // })
+         })
 
         // обработка закрытия окна
         this.view.windowCancelBtn.attachEvent('onItemClick', () => {
@@ -66,27 +66,26 @@ export class CEmployeeWindow {
 
              switch (this.type) {
                  case EMPLOYEE_WINDOW_TYPE.create:
-        //             employeeModel.createEmployee(this.fetch()).then(() => {
-        //                 this.onChange()
-                        webix.message("Создание сотрудника")
+                     employeeModel.createEmployee(this.fetch()).then(() => {
+                        this.onChange()
                          this.hide()
-        //             })
+                     })
                      break;
                  case EMPLOYEE_WINDOW_TYPE.update:
-        //             employeeModel.updateEmployee(this.fetch()).then(() => {
-        //                 this.onChange()
-                        webix.message("Изменение сотрудника")
+                     employeeModel.updateEmployee(this.fetch()).then(() => {
+                         this.onChange()
+                        
                          this.hide()
-        //             })
+                     })
                      break;
                 case EMPLOYEE_WINDOW_TYPE.delete:
-        //                 // удаление сотрудника
-        //                 employeeModel.deleteEmployee(this.fetch()).then(() => {
-        //                     this.onChange()
+                         // удаление сотрудника
+                         employeeModel.deleteEmployee(this.fetch()).then(() => {
+                             this.onChange()
                             webix.message("Удаление сотрудника")
                              this.hide()
-        //                 })
-        //             })
+                        })
+                     
                      break;
              }
          })

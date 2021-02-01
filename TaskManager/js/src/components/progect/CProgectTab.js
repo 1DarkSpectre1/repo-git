@@ -1,16 +1,21 @@
 import { ProgectTabView,  ProgectTabContextMenu, TabControllsView } from './ProgectTabView.js';
 import { CProgectWindow, PROGECT_WINDOW_TYPE } from './ProgectWindow/CProgectWindow.js';
 import { Progect } from '../../models/entities/progect.js'
+import progectModel from '../../models/progectModel.js';
+import employeeModel from '../../models/employeeModel.js';
+import { CTaskTab } from '../task/CTaskTab.js'
+
 // класс таба 'Сотрудники'
 export class CProgectTab {
     constructor() {
         this.refreshControlls   // функция обновления элементов управления в header'е
         this.view               // объект для быстрого доступа к представлениям
         this.window             // экземпляр окна для работы с книгами 
+        this.refreshTableTask
     }
-    init( refreshControlls) {
+    init( refreshControlls,refreshTableTask) {
         this.refreshControlls = refreshControlls // функция обновления элементов управления в header'е
-
+        this.refreshTableTask  = refreshTableTask //функция обновления таблицы
          this.window = new CProgectWindow(); // инициализация компонента окна
          this.window.init(
              () => { this.refreshTable() }
@@ -45,7 +50,9 @@ export class CProgectTab {
             }
         }
 
-
+        this.view.datatable.attachEvent('onAfterSelect', () =>{
+            this.refreshTableTask()
+        })
         // создание сотрудника
         this.view.btns.createBtn.attachEvent('onItemClick', () => {
             this.createProgect()
@@ -66,7 +73,7 @@ export class CProgectTab {
         // прикрепление контекстного меню к таблице
         this.view.datatableContextMenu.attachTo(this.view.datatable)
          // загрузка первичных данных в таблицу
-    //     this.refreshTable()
+        this.refreshTable()
 
         // обработка события нажатия на пункт контекстного меню
         this.view.datatableContextMenu.attachEvent('onMenuItemClick', (id) => {
@@ -76,6 +83,20 @@ export class CProgectTab {
         });
 
      }
+     refreshTable() {
+      
+        
+            progectModel.getProgects().then((progects) => {
+                progects.forEach(progect => {
+                    employeeModel.getEmployeeByID(progect.fk_employee).then((employee)=>{
+                        progect.employee=`${employee.lastname} ${employee.firstname}`
+                    })
+                });
+                this.view.datatable.clearAll()
+                this.view.datatable.parse(progects)
+            })
+       // }
+    }
     
     switchControlls() {
         switch (this.view.controlls.isVisible()) {
