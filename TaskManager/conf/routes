@@ -14,7 +14,7 @@ GET     /user/logout                            CAuth.Logout
 POST    /user/authorize/check                   CAuth.Check
 POST    /user/login                             CAuth.Login
 
-GET     /task/all/progect/:id                   CTask.GetAll
+GET     /task/all/progect/:id                   CTask.GetAllByIDProgect
 GET     /task/:id                               CTask.GetByID
 POST    /task/create                            CTask.Create
 POST    /task/update                            CTask.Update
