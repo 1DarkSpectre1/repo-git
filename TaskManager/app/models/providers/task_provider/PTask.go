@@ -120,6 +120,7 @@ func (p *PTask) CreateTask(task *entities.Task) (b *entities.Task, err error) {
 		revel.AppLog.Errorf("PTask.UpdateTask : p.taskStatusMapper.IDByStatus, %s\n", err)
 		return
 	}
+	
 	// добавление книги
 	task.ID, err = p.taskMapper.Insert(bdbt)
 	if err != nil {

@@ -12,10 +12,10 @@ type TaskDBType struct {
 	Pk_id        int64   // идентификатор
 	Fk_status    int64   // статус задачи
 	Fk_progect   int64   // проект
-	Fk_employee  int64   // сотрудник
+	Fk_employee  *int64   // сотрудник
 	C_name       string  // название задачи
 	C_sch_hours  float32 // автор
-	C_fact_hours float32 // издательство
+	C_fact_hours *float32 // издательство
 }
 
 // ToType функция преобразования типа бд к типу сущности
@@ -155,7 +155,6 @@ func (m *MTask) Insert(Task *TaskDBType) (id int64, err error) {
 	)
 
 	revel.AppLog.Debugf("MTask.Insert, Task: %+v\n", Task)
-
 	// запрос
 	query = `
 		INSERT INTO task_manager.t_tasks(

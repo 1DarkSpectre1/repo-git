@@ -102,7 +102,6 @@ func (c *CTask) Create() revel.Result {
 		revel.AppLog.Errorf("CTask.Create : c.fetchPostTask, %s\n", err)
 		return c.RenderJSON(Failed(err.Error()))
 	}
-
 	// создание сущности
 	task, err = c.provider.CreateTask(task)
 	if err != nil {

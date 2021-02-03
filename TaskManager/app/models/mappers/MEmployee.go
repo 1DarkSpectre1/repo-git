@@ -13,9 +13,9 @@ type EmployeeDBType struct {
 	Fk_position    int64  // FK на должность
 	C_lastname     string // фамилия
 	C_firstname    string // имя
-	C_middlename   string // отчество
-	C_phone_number string // телефонный номер
-	C_email        string // почтовый адрес
+	C_middlename   *string // отчество
+	C_phone_number *string // телефонный номер
+	C_email        *string // почтовый адрес
 }
 
 // ToType функция преобразования типа бд к типу сущности

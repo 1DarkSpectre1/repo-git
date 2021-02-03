@@ -5,8 +5,8 @@ type Employee struct {
 	ID          int64  `json:"id"`           // идентификатор
 	Lastname    string `json:"lastname"`     // фамилия
 	Firstname   string `json:"firstname"`    // имя
-	Middlename  string `json:"middlename"`   // отчество
+	Middlename  *string `json:"middlename"`   // отчество
 	Position    string `json:"position"`     // должность
-	PhoneNumber string `json:"phone_number"` // телефонный номер
-	Email       string `json:"email"`        // почтовый адрес
+	PhoneNumber *string `json:"phone_number"` // телефонный номер
+	Email       *string `json:"email"`        // почтовый адрес
 }
