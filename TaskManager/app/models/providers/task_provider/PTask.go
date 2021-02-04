@@ -76,7 +76,7 @@ func (p *PTask) GetTasksByProgectID(id int64) (bs []*entities.Task, err error) {
 	// получение данных книг
 	bdbts, err = p.taskMapper.SelectAllByProgectID(id )
 	if err != nil {
-		revel.AppLog.Errorf("PTask.GetTasks : p.taskMapper.SelectAll, %s\n", err)
+		revel.AppLog.Errorf("PTask.GetTasksByProgectID : p.taskMapper.SelectAll, %s\n", err)
 		return
 	}
 
@@ -84,14 +84,49 @@ func (p *PTask) GetTasksByProgectID(id int64) (bs []*entities.Task, err error) {
 		// преобразование к типу сущности
 		b, err = bdbt.ToType()
 		if err != nil {
-			revel.AppLog.Errorf("PTask.GetTasks : bdbt.ToType, %s\n", err)
+			revel.AppLog.Errorf("PTask.GetTasksByProgectID : bdbt.ToType, %s\n", err)
 			return
 		}
 
 		// получение значения статуса по ключу
 		b.Status, err = p.taskStatusMapper.StatusByID(bdbt.Fk_status)
 		if err != nil {
-			revel.AppLog.Errorf("PTask.GetTasks : p.taskStatusMapper.StatusByID, %s\n", err)
+			revel.AppLog.Errorf("PTask.GetTasksByProgectID : p.taskStatusMapper.StatusByID, %s\n", err)
+			return
+		}
+		
+		bs = append(bs, b)
+	}
+
+	return
+}
+
+// GetTAsks метод получения книг
+func (p *PTask) GetTasksByEmployeeID(id int64) (bs []*entities.Task, err error) {
+	var (
+		bdbts []*mappers.TaskDBType
+		b     *entities.Task
+	)
+
+	// получение данных книг
+	bdbts, err = p.taskMapper.SelectAllByEmployeeID(id )
+	if err != nil {
+		revel.AppLog.Errorf("PTask.GetTasksByEmployeeID : p.taskMapper.SelectAllByEmployeeID, %s\n", err)
+		return
+	}
+
+	for _, bdbt := range bdbts {
+		// преобразование к типу сущности
+		b, err = bdbt.ToType()
+		if err != nil {
+			revel.AppLog.Errorf("PTask.GetTasksByEmployeeID : bdbt.ToType, %s\n", err)
+			return
+		}
+
+		// получение значения статуса по ключу
+		b.Status, err = p.taskStatusMapper.StatusByID(bdbt.Fk_status)
+		if err != nil {
+			revel.AppLog.Errorf("PTask.GetTasksByEmployeeID : p.taskStatusMapper.StatusByID, %s\n", err)
 			return
 		}
 		

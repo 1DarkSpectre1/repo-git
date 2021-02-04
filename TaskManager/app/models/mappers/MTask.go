@@ -107,6 +107,57 @@ func (m *MTask) SelectAllByProgectID(id int64) (bs []*TaskDBType, err error) {
 	return
 }
 
+func (m *MTask) SelectAllByEmployeeID(id int64) (bs []*TaskDBType, err error) {
+	var (
+		query string    // строка запроса
+		rows  *sql.Rows // выборка данных
+	)
+
+	// запрос
+	query = `
+		SELECT 
+			pk_id,
+			fk_status,
+			fk_employee,
+			c_name,
+			c_sch_hours,
+			c_fact_hours
+		FROM task_manager.t_tasks
+		WHERE fk_employee=$1
+		ORDER BY pk_id;
+	`
+
+	// выполнение запроса
+	rows, err = m.db.Query(query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+			return
+		}
+
+		revel.AppLog.Errorf("MTask.SelectAllByEmployeeID : m.db.query, %s\n", err)
+		return
+	}
+
+	// обработка строк выборки
+	for rows.Next() {
+		// создание экземпляра сущности для считывания строки выборки
+		b := new(TaskDBType)
+
+		// считывание строки выборки
+		err = rows.Scan(&b.Pk_id, &b.Fk_status, &b.Fk_employee, &b.C_name, &b.C_sch_hours, &b.C_fact_hours)
+		if err != nil {
+			revel.AppLog.Errorf("MTask.SelectAllByEmployeeID : rows.Scan, %s\n", err)
+			continue
+		}
+
+		// добавление сущности в массив
+		bs = append(bs, b)
+	}
+
+	return
+}
+
 // SelectByID получение задачи по ID
 func (m *MTask) SelectByID(id int64) (b *TaskDBType, err error) {
 	var (
