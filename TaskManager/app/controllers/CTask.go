@@ -75,6 +75,20 @@ func (c *CTask) GetAllByIDProgect(id int64) revel.Result {
 	return c.RenderJSON(Succes(tasks))
 }
 
+// GetAllByIDEmployee получение всех задач
+func (c *CTask) GetAllByIDEmployee(id int64) revel.Result {
+	// получение задач
+	tasks, err := c.provider.GetTasksByEmployeeID(id)
+	if err != nil {
+		revel.AppLog.Errorf("CTask.GetAllByIDEmployee : c.provider.GetTasksByEmployeeID, %s\n", err)
+		return c.RenderJSON(Failed(err.Error()))
+	}
+	revel.AppLog.Debugf("CTask.GetAllByIDEmployee : c.provider.GetTasksByEmployeeID, tasks: %+v\n", tasks)
+
+	// рендер положительного результата
+	return c.RenderJSON(Succes(tasks))
+}
+
 // GetByID получение задачи по id
 func (c *CTask) GetByID(id int64) revel.Result {
 	// получение задач
