@@ -47,25 +47,27 @@ export function TabControllsView() {
         batch:"TaskTabView",
        hidden:true,
         cols: [
+            { view: "label", label: "Задачи",css:{"font-size":"22px"},},
+            
             {
                 id: 'tasktab-add-btn',
                 view: 'icon',
                 tooltip: 'Добавить',
-                icon: 'plus',
+                icon: 'mdi mdi-plus',
                 width: 30,
             },
             {
                 id: 'tasktab-edit-btn',
                 view: 'icon',
                 tooltip: 'Редактировать',
-                icon: 'pencil',
+                icon: 'mdi mdi-pencil',
                 width: 30,
             },
             {
                 id: 'tasktab-remove-btn',
                 view: 'icon',
                 tooltip: 'Удалить',
-                icon: 'trash',
+                icon: 'wxi-trash',
                 width: 30,
             },
             { width: 30,  },

@@ -6,6 +6,9 @@ class TaskModel extends Model {
         super()
     }
 
+    getTaskByIDEmployee(id){
+        return this.get(`/task/all/employee/${id}`)
+    }
     // получение всех книг
     getTasksByIDProgect(id) {
         return this.get(`/task/all/progect/${id}`)

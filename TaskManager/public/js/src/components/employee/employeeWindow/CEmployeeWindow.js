@@ -8,11 +8,13 @@ export class CEmployeeWindow {
         this.view       // объект для быстрого доступа к представлениям
         this.type       // тип текущего отображения окна
         this.onChange   // callback функция при CUD операциях над сотрудником
+        this.ChangeEmployees
     }
 
     // метод инициализации компонента
-    init(onChange) {
+    init(onChange,ChangeEmployees) {
         this.onChange = onChange
+        this.ChangeEmployees=ChangeEmployees
     }
 
     // метод получения webix конфигурации компонента
@@ -68,13 +70,15 @@ export class CEmployeeWindow {
                  case EMPLOYEE_WINDOW_TYPE.create:
                      employeeModel.createEmployee(this.fetch()).then(() => {
                         this.onChange()
+                        this.ChangeEmployees()
                          this.hide()
                      })
+                     
                      break;
                  case EMPLOYEE_WINDOW_TYPE.update:
                      employeeModel.updateEmployee(this.fetch()).then(() => {
                          this.onChange()
-                        
+                         this.ChangeEmployees()
                          this.hide()
                      })
                      break;
@@ -82,7 +86,7 @@ export class CEmployeeWindow {
                          // удаление сотрудника
                          employeeModel.deleteEmployee(this.fetch()).then(() => {
                              this.onChange()
-                            webix.message("Удаление сотрудника")
+                             this.ChangeEmployees()
                              this.hide()
                         })
                      

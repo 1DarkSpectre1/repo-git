@@ -91,9 +91,12 @@ export class CTaskWindow {
                 break;
         }
     }
-
+    RefreshNames(names){
+        this.names=names
+    }
     // метод отображения окна
     show(type) {
+      // console.log(this.names)
         this.view.formfields.employee.define('options', this.names)
         this.view.formfields.employee.refresh()
         switch (type) {

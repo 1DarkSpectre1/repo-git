@@ -4,16 +4,17 @@ export default function ToolbarView() {
         view: 'toolbar',
         padding:3,
         elements: [
-            { view: "icon", icon: "menu", click: function(){
+            { view: "icon", icon: "mdi mdi-menu", click: function(){
                $$("main-tabbar").toggle();
              }
             },
-            { view: "label", label: "Task manager"},
+            { view: "label", label: "Task manager",css:{"font-style": "italic"}},
             {},
             {
                 view: 'label',
                 id: 'userInfoLabel',
                 label: 'загрузка...',
+                css:{"font-style": "italic"},
                 width: 200,
             },
             {

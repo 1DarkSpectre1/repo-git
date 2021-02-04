@@ -42,6 +42,7 @@ export class Application {
         // инициализация компонента вкладки сотрудников
         this.employeeTab.init(
             (config) => { this.refreshControlls(config) }, // refreshControlls
+            ()=>{this.taskTab.ChangeEmployees()}
         )
 
         

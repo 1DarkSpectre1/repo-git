@@ -42,25 +42,26 @@ export function TabControllsView() {
         batch:"ProgectTabView",
         
         cols: [
+            { view: "label", label: "Проекты",css:{"font-size":"22px"}},
             {
                 id: 'progecttab-add-btn',
                 view: 'icon',
                 tooltip: 'Добавить',
-                icon: 'plus',
+                icon: 'mdi mdi-plus',
                 width: 30,
             },
             {
                 id: 'progecttab-edit-btn',
                 view: 'icon',
                 tooltip: 'Редактировать',
-                icon: 'pencil',
+                icon: 'wxi-pencil',
                 width: 30,
             },
             {
                 id: 'progecttab-remove-btn',
                 view: 'icon',
                 tooltip: 'Удалить',
-                icon: 'trash',
+                icon: 'wxi-trash',
                 width: 30,
             },
             { width: 30 },

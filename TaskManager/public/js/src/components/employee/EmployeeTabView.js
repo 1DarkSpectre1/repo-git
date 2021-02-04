@@ -44,26 +44,26 @@ export function TabControllsView() {
         batch:"EmployeeTabView",
         hidden:true,
         cols: [
-            
+            { view: "label", label: "Сотрудники",css:{"font-size":"22px"}},
             {
                 id: 'employeetab-add-btn',
                 view: 'icon',
                 tooltip: 'Добавить',
-                icon: 'plus',
+                icon: 'mdi mdi-plus',
                 width: 30,
             },
             {
                 id: 'employeetab-edit-btn',
                 view: 'icon',
                 tooltip: 'Редактировать',
-                icon: 'pencil',
+                icon: 'mdi mdi-pencil',
                 width: 30,
             },
             {
                 id: 'employeetab-remove-btn',
                 view: 'icon',
                 tooltip: 'Удалить',
-                icon: 'trash',
+                icon: 'wxi-trash',
                 width: 30,
             },
             { width: 30 },

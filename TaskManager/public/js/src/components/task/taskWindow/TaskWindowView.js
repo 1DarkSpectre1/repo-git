@@ -54,7 +54,6 @@ export default function TaskWindowView(type) {
                     id: 'taskWindowFormStatus',
                     label: 'Статус',
                     name: 'status',
-                    required: true,
                     labelWidth: 150,
                 },
                 {
@@ -70,7 +69,6 @@ export default function TaskWindowView(type) {
                     id: 'taskWindowFormFactHours',
                     label: 'Факт часы',
                     name: 'fact_hours',
-                    required: true,
                     labelWidth: 150,
                 },
                 {

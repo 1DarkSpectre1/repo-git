@@ -2,6 +2,7 @@ import { EmployeeTabView,EmployeeTabContextMenu,  TabControllsView } from './Emp
 import { CEmployeeWindow, EMPLOYEE_WINDOW_TYPE } from './employeeWindow/CEmployeeWindow.js';
 import { Employee } from './../../models/entities/employee.js';
 import employeeModel from './../../models/employeeModel.js';
+import taskModel from './../../models/taskModel.js';
 
 // класс таба 'Сотрудники'
 export class CEmployeeTab {
@@ -12,12 +13,13 @@ export class CEmployeeTab {
        }
 
     // метод инициализации компонента
-    init( refreshControlls) {
+    init( refreshControlls,ChangeEmployees) {
         this.refreshControlls = refreshControlls // функция обновления элементов управления в header'е
-
+        
          this.window = new CEmployeeWindow(); // инициализация компонента окна
          this.window.init(
-             () => { this.refreshTable() }
+             () => { this.refreshTable() },
+             ChangeEmployees
          ) // вызова инициализации компонента окна
 
     }
@@ -185,6 +187,7 @@ export class CEmployeeTab {
             if (!employee) {
                 return
             }
+            
             this.window.parse(employee)
             this.window.switch(EMPLOYEE_WINDOW_TYPE.update)
         })
@@ -208,9 +211,15 @@ export class CEmployeeTab {
              if (!employee) {
                  return
              }
-
-            this.window.parse(employee)
-            this.window.switch(EMPLOYEE_WINDOW_TYPE.delete)
+             taskModel.getTaskByIDEmployee(selected.id).then((tasks)=>{
+                 if (tasks) {
+                    webix.message('Нельзя удалить сотрудника у которого есть задача')
+                    return 
+                 }
+                 
+                 this.window.parse(selected)
+                this.window.switch(EMPLOYEE_WINDOW_TYPE.delete)
+             })
         })
     }
 }

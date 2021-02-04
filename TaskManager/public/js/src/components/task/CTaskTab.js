@@ -27,7 +27,6 @@ export class CTaskTab {
              () => { this.refreshTable() },
              this.names
          ) // вызова инициализации компонента окна
-
       //  this.names = [] // массив сотрудников в сабменю
     }
 
@@ -110,7 +109,20 @@ export class CTaskTab {
 
         })
      }
-
+ChangeEmployees(){
+    employeeModel.getEmployees().then((employees) => {
+        // проверка наличия данных
+        if (!employees) {
+            return
+        }
+        this.names=[]
+        employees.map((employee) => {
+            this.names.push({ ID: employee.id,id: employee.id, value: `${employee.lastname} ${employee.firstname}` })
+        })
+        this.view.datatableContextMenu.getItem(TASK_CONTEXT_MENU.give).submenu=this.names
+        this.window.RefreshNames(this.names)
+    })
+}
     // обработка выбора в контекстном меню
     handleContextMenu(item) {
         switch (item) {
@@ -191,6 +203,7 @@ export class CTaskTab {
                         //console.log(task)
                         employeeModel.getEmployeeByID(task.fk_employee).then((employee)=>{
                             task.employee=`${employee.lastname} ${employee.firstname}`
+                            this.view.datatable.refresh()
                         })
                     });
                 }
@@ -273,7 +286,8 @@ export class CTaskTab {
             }
             // преобразование да
             // заполнение полей окна данными книги
-             //console.log(task)
+            
+             selected.employee=selected.fk_employee
              this.window.parse(selected)
              this.window.switch(TASK_WINDOW_TYPE.update)
         })
@@ -292,22 +306,7 @@ export class CTaskTab {
             console.error('id of item is ', selected.ID)
             return
         }
-       
-        // taskModel.getTaskByID(selected.ID).then((task) => {
-        //     // проверка наличия данных
-        //     if (!task) {
-        //         return
-        //     }
-        //     // проверка выданности книги
-        //     if (task.status === TASK_STATUS.notAvailable) {
-        //         webix.message('Нельзя удалить выданную книгу')
-        //         return
-        //     }
-
-        //     // преобразование даты издания
-        //     let time = new Date(task.year)
-        //     task.year = time.getFullYear()
-
+            selected.employee=selected.fk_employee
              // заполнение полей окна данными книги
              this.window.parse(selected)
              this.window.switch(TASK_WINDOW_TYPE.delete)

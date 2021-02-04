@@ -100,6 +100,7 @@ export class CProgectTab {
                 progects.forEach(progect => {
                     employeeModel.getEmployeeByID(progect.fk_employee).then((employee)=>{
                         progect.employee=`${employee.lastname} ${employee.firstname}`
+                        this.view.datatable.refresh()
                     })
                 });
                 this.view.datatable.clearAll()
