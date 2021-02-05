@@ -14,7 +14,7 @@ type TaskDBType struct {
 	Fk_progect   int64   // проект
 	Fk_employee  *int64   // сотрудник
 	C_name       string  // название задачи
-	C_sch_hours  float32 // автор
+	C_sch_hours  *float32 // автор
 	C_fact_hours *float32 // издательство
 }
 
