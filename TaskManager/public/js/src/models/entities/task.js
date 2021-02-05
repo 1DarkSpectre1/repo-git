@@ -16,7 +16,7 @@ export class Task {
 export let TASK_STATUS = {
     new_task: 'Не назначена',
     appointed: 'Назначена',
-    work: 'в работе',
-    suspended:'приостановлена',
+    work: 'В работе',
+    pause:'Приостановлена',
     performed:'выполнена',
 }

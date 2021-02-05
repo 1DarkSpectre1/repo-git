@@ -53,6 +53,7 @@ export class CProgectTab {
                 deleteBtn: $$('progecttab-remove-btn'),
             }
         }
+        //обновление таблицы задач при изменении проекта
         this.view.datatable.attachEvent('onSelectChange', () =>{
             this.refreshTableTask()
         })

@@ -10,7 +10,7 @@ export class CTaskTab {
     constructor() {
         this.refreshControlls       // функция обновления элементов управления в header'е
         this.view                   // объект для быстрого доступа к представлениям
-        this.window                 // экземпляр окна для работы с книгами
+        this.window                 // экземпляр окна для работы с задачами
         this.updateEventsDatatable  // функция обновления таблицы событий
         this.names                  // массив сотрудников в сабменю
         this.GetSelectProgect
@@ -54,23 +54,64 @@ export class CTaskTab {
             datatableContextMenu: $$('taskTabDatatableContextMenu'),
             controlls: $$('tasktab-controlls'),
             btns: {
+                playBtn:   $$('tasktab-play-btn'),
+                pauseBtn:  $$('tasktab-pause-btn'),
                 createBtn: $$('tasktab-add-btn'),
                 updateBtn: $$('tasktab-edit-btn'),
                 deleteBtn: $$('tasktab-remove-btn'),
             }
         }
 
-        // создание книги
+
+        this.view.datatable.attachEvent('onSelectChange', () =>{
+            ///switch()
+            var selected =this.view.datatable.getSelectedItem()
+            if (selected) {   
+                switch (selected.status) {
+                    case TASK_STATUS.work: // редактирование выделленой задачиbreak
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.start)
+                        this.view.btns.playBtn.hide()
+                        this.view.datatableContextMenu.enableItem(TASK_CONTEXT_MENU.pause)
+                        this.view.btns.pauseBtn.show()
+                        break
+                    case TASK_STATUS.pause: // удаление выделенной задачиbreak
+                    case TASK_STATUS.appointed:
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
+                        this.view.btns.playBtn.show()
+                        this.view.datatableContextMenu.enableItem(TASK_CONTEXT_MENU.start)
+                        this.view.btns.pauseBtn.hide()
+                        break
+                    case TASK_STATUS.new_task:
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.start)
+                        this.view.btns.pauseBtn.hide()
+                        this.view.btns.playBtn.hide()
+                        break 
+                    default:
+                        break
+                }
+            }
+        })
+        // Начало работы задачи
+        this.view.btns.playBtn.attachEvent('onItemClick', () => {
+           
+            this.StartTask()
+        })
+        // Приостановление задачи
+        this.view.btns.pauseBtn.attachEvent('onItemClick', () => {          
+            this.PauseTask()
+        })
+        // создание задачи
         this.view.btns.createBtn.attachEvent('onItemClick', () => {
             this.createTask()
         })
 
-        // изменение книги
+        // изменение задачи
         this.view.btns.updateBtn.attachEvent('onItemClick', () => {
             this.updateTask()
         })
 
-        // удаление книги
+        // удаление задачи
         this.view.btns.deleteBtn.attachEvent('onItemClick', () => {
             this.deleteTask()
         })
@@ -92,7 +133,7 @@ export class CTaskTab {
 
         // прикрепление контекстного меню к таблице
          this.view.datatableContextMenu.attachTo(this.view.datatable)
-
+        
          // загрузка первичных данных в таблицу
         // this.refreshTable()
 
@@ -126,33 +167,17 @@ ChangeEmployees(){
     // обработка выбора в контекстном меню
     handleContextMenu(item) {
         switch (item) {
-            case TASK_CONTEXT_MENU.edit: // редактирование выделленой книгиbreak
+            case TASK_CONTEXT_MENU.edit: // редактирование выделленой задачи
                 this.updateTask()
                 break
-            case TASK_CONTEXT_MENU.remove: // удаление выделенной книгиbreak
+            case TASK_CONTEXT_MENU.remove: // удаление выделенной задачи
                 this.deleteTask()
                 break
-            case TASK_CONTEXT_MENU.take: // добавление книги
-                // получение выделенного элемента
-                let task = this.view.datatable.getSelectedItem()
-                if (!task) {
-                    webix.message('Выделите строку')
-                    return
-                }
-                if (!task.id) {
-                    console.error('Incorrect ID of item:', task.id)
-                    return
-                }
-
-                // проверка статуса книги
-                if (task.status === TASK_STATUS.available) {
-                    webix.message('Задача не выдана')
-                    return
-                }
-
-                eventModel.createTakeEvent(task.ID).then(() => {
-                    this.refreshTable()
-                })
+            case TASK_CONTEXT_MENU.pause: // Приостановление задачи  
+                this.PauseTask()
+                break
+            case TASK_CONTEXT_MENU.start: // Начало работы задачи
+                this.StartTask()
                 break
             default:
                 console.error(`Неизвестное значение пункта меню: ${item}.`)
@@ -176,8 +201,8 @@ ChangeEmployees(){
             return
         }
         
-        task.employee=employee.id
-      //  проверка статуса книги
+        task.fk_employee=employee.id
+      //  проверка статуса задачи
         if (task.status == TASK_STATUS.new_task) {
             task.status=TASK_STATUS.appointed
         }
@@ -186,7 +211,7 @@ ChangeEmployees(){
         })
     }
     
-    // функция обновления таблицы книг
+    // функция обновления таблицы задач
     refreshTable() {
         var selected =$$('progectTabDatatable').getSelectedItem()
        // console.log(this.GetSelectProgect()) 
@@ -195,11 +220,12 @@ ChangeEmployees(){
          } else {
           
        taskModel.getTasksByIDProgect(selected.ID).then((tasks) => {
-                // заполнение таблицы окна данными книги
+                // заполнение таблицы окна данными задачи
                 if (tasks) {
                     tasks.forEach(task => {
                        // console.log(selected.ID)
                         task.fk_progect=selected.ID
+                        task.id=task.ID
                         //console.log(task)
                         employeeModel.getEmployeeByID(task.fk_employee).then((employee)=>{
                             task.employee=`${employee.lastname} ${employee.firstname}`
@@ -215,7 +241,7 @@ ChangeEmployees(){
 }
     
 
-//     // метод отображения таба с фильтрацией по книге
+//     // метод отображения таба с фильтрацией по задаче
 //     showByTaskID(taskID) {
 //         taskModel.getTaskByID(taskID).then((task) => {
 //             // проверка наличия данных
@@ -257,13 +283,47 @@ ChangeEmployees(){
         this.view.controlls.hide()
     }
 
-    // функция создания книги
+ //функция начала работы задачи
+ StartTask(){
+    let selected = this.view.datatable.getSelectedItem()
+    if (!selected) {
+        webix.message('Выделите строку')
+        return
+    }
+    if (!selected.id) {
+        console.error('Incorrect ID of item:', selected.id)
+        return
+    }
+    selected.status=TASK_STATUS.work
+    taskModel.updateTask(selected).then(() => {
+        this.refreshTable()
+        this.view.btns.playBtn.hide()
+    })
+}
+//функция приостановления работы задачи
+PauseTask(){
+    let selected = this.view.datatable.getSelectedItem()
+    if (!selected) {
+        webix.message('Выделите строку')
+        return
+    }
+    if (!selected.id) {
+        console.error('Incorrect ID of item:', selected.id)
+        return
+    }
+    selected.status=TASK_STATUS.pause
+    taskModel.updateTask(selected).then(() => {
+        this.refreshTable()
+        this.view.btns.pauseBtn.hide()
+    })
+}
+    // функция создания задачи
     createTask(id) {
         this.window.parse(new Task())
         this.window.switch(TASK_WINDOW_TYPE.create)
     }
 
-    // функция изменения книги
+    // функция изменения задачи
     updateTask() {
         // получение выделенного элемента
         let selected = this.view.datatable.getSelectedItem()
@@ -284,16 +344,16 @@ ChangeEmployees(){
             if (!task) {
                 return
             }
-            // преобразование да
-            // заполнение полей окна данными книги
+            
+            // заполнение полей окна данными задачи
             
              selected.employee=selected.fk_employee
              this.window.parse(selected)
              this.window.switch(TASK_WINDOW_TYPE.update)
         })
     }
-
-    // функция удаления книги
+   
+    // функция удаления задачи
     deleteTask() {
         // получение выделенного элемента
         let selected = this.view.datatable.getSelectedItem()
@@ -307,16 +367,18 @@ ChangeEmployees(){
             return
         }
             selected.employee=selected.fk_employee
-             // заполнение полей окна данными книги
+             // заполнение полей окна данными задачи
              this.window.parse(selected)
              this.window.switch(TASK_WINDOW_TYPE.delete)
         // })
     }
  }
 
-// допустимые значения пунктов контекстного меню таба Книги
+// допустимые значения пунктов контекстного меню таба задачи
 export const TASK_CONTEXT_MENU = {
     give: 'Назначить',
+    start:'Начать работу',
+    pause:'Приостановить',
     add: 'Добавить',
     edit: 'Изменить',
     remove: 'Удалить'

@@ -42,6 +42,14 @@ export default function TaskWindowView(type) {
                     labelWidth: 150,
                 },
                 {
+                    view: 'textarea',
+                    id: 'taskWindowFormDescription',
+                    label: 'Описание',
+                    name: 'Description',
+                   
+                    labelWidth: 150,
+                },
+                {
                     view: 'richselect',
                     id: 'taskWindowFormEmployee',
                     label: 'Сотрудник',
@@ -61,7 +69,7 @@ export default function TaskWindowView(type) {
                     id: 'taskWindowFormSchHours',
                     label: 'План часы',
                     name: 'sch_hours',
-                    required: true,
+                   
                     labelWidth: 150,
                 },
                 {
@@ -69,6 +77,7 @@ export default function TaskWindowView(type) {
                     id: 'taskWindowFormFactHours',
                     label: 'Факт часы',
                     name: 'fact_hours',
+                    
                     labelWidth: 150,
                 },
                 {

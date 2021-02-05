@@ -69,6 +69,7 @@ export default function EmployeeWindowView(type) {
                     id: 'employeeWindowFormPhoneNumber',
                     label: 'Телефонный номер',
                     name: 'phone_number',
+                    
                     labelWidth: 150,
                 },
                 {
@@ -76,6 +77,7 @@ export default function EmployeeWindowView(type) {
                     id: 'employeeWindowFormEmail',
                     label: 'Электронная почта',
                     name: 'email',
+                  
                     labelWidth: 150,
                 },
                 {

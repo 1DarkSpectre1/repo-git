@@ -2,6 +2,7 @@
 export default function ToolbarView() {
     return {
         view: 'toolbar',
+        css:"webix_shadow_medium",
         padding:3,
         elements: [
             { view: "icon", icon: "mdi mdi-menu", click: function(){
@@ -19,6 +20,7 @@ export default function ToolbarView() {
             },
             {
                 view: 'button',
+                
                 id: 'logoutBtn',
                 css: 'webix_secondary',
                 label: 'Выход',

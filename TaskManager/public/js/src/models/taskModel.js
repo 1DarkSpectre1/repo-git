@@ -20,26 +20,32 @@ class TaskModel extends Model {
     }
 
     // создание книги
-    createTask(task,id) {
-        task.sch_hours=Number(task.sch_hours)
-        task.fact_hours=0
-        task.status=TASK_STATUS.new_task
-        task.fk_progect=Number(id)
-        if (Number(task.employee)!=0) {
-        task.fk_employee=Number(task.employee)
-        task.status=TASK_STATUS.appointed
-        }
-        console.log(task)
+    createTask(task) {
+        // task.sch_hours=Number(task.sch_hours)
+        // task.fact_hours=0
+        // task.status=TASK_STATUS.new_task
+        // task.fk_progect=Number(id)
+        // if (Number(task.employee)!=0) {
+        // task.fk_employee=Number(task.employee)
+        // task.status=TASK_STATUS.appointed
+        // }
+        
         return this.post('/task/create', task)
     }
 
     // изменение книги
     updateTask(task) {
-        task.sch_hours=Number(task.sch_hours)
-        task.fact_hours=Number(task.fact_hours)
-        task.fk_progect=Number(task.fk_progect)
-        task.fk_employee=Number(task.employee)
-        task.id=task.ID
+        
+        // // task.sch_hours=Number(task.sch_hours)
+        // // task.fact_hours=Number(task.fact_hours)
+        // // task.fk_progect=Number(task.fk_progect)
+        // if (Number(task.employee)!=0) {
+        //     task.fk_employee=Number(task.employee)
+        //     task.status=TASK_STATUS.appointed
+        // }else{
+        //     task.status=TASK_STATUS.new_task
+        // }
+        // task.id=task.ID
         return this.post('/task/update', task)
     }
 

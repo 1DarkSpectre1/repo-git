@@ -42,7 +42,7 @@ export function TabControllsView() {
         batch:"ProgectTabView",
         
         cols: [
-            { view: "label", label: "Проекты",css:{"font-size":"22px"}},
+            { view: "label",align:"center", label: "Проекты"},
             {
                 id: 'progecttab-add-btn',
                 view: 'icon',
@@ -64,7 +64,7 @@ export function TabControllsView() {
                 icon: 'wxi-trash',
                 width: 30,
             },
-            { width: 30 },
+            
         ]
     }
 }

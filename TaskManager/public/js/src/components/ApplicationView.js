@@ -5,12 +5,14 @@
 export default function WorkedPlaceView(taskTab, employeeTab, progectTab, userInfo) {
     return {
         id: 'workedPlace',
+        
         rows: [
           userInfo.config(),
           {
                 cols:[
                     {
                       view: "sidebar",
+                     
                       id:"main-tabbar",
                       data: menu_data,
                       collapsed:true,
@@ -20,10 +22,9 @@ export default function WorkedPlaceView(taskTab, employeeTab, progectTab, userIn
                         {
                             id: 'main',         
                             height:35,
-                            cols: [                     
-                                {},                               
+                            cols: [                             
                                 {
-                                    id: "tab-controlls", rows: [
+                                    id: "tab-controlls",view:"toolbar", rows: [
                                         taskTab.configTabControlls(),
                                         employeeTab.configTabControlls(),
                                         progectTab.configTabControlls(),

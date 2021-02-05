@@ -44,7 +44,7 @@ export function TabControllsView() {
         batch:"EmployeeTabView",
         hidden:true,
         cols: [
-            { view: "label", label: "Сотрудники",css:{"font-size":"22px"}},
+            { view: "label",align:"center", label: "Сотрудники"},
             {
                 id: 'employeetab-add-btn',
                 view: 'icon',
@@ -66,7 +66,7 @@ export function TabControllsView() {
                 icon: 'wxi-trash',
                 width: 30,
             },
-            { width: 30 },
+            
         ]
     }
 }

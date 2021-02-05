@@ -1,5 +1,6 @@
 import TaskWindowView from './TaskWindowView.js'
 import taskModel from './../../../models/taskModel.js'
+import { TASK_STATUS } from '../../../models/entities/task.js'
 
 // компонент окна для работы с сущностью книги
 export class CTaskWindow {
@@ -56,7 +57,7 @@ export class CTaskWindow {
             var selected =this.view.progectdatatable.getSelectedItem()
             switch (this.type) {
                 case TASK_WINDOW_TYPE.create:
-                    taskModel.createTask(this.fetch(),selected.ID).then(() => {
+                    taskModel.createTask(this.fetch(selected.ID)).then(() => {
                         this.onChange()
                   //webix.message("Создание задачи")
                         this.hide()
@@ -115,7 +116,7 @@ export class CTaskWindow {
                 this.view.formfields.fact_hours.show()
                 this.view.formfields.name.enable()
                 this.view.formfields.employee.enable()
-                this.view.formfields.status.enable()
+                this.view.formfields.status.disable()
                 this.view.formfields.sch_hours.enable()
                 this.view.formfields.fact_hours.enable()
                 this.view.window.resize()
@@ -147,8 +148,29 @@ export class CTaskWindow {
     }
 
     // метод получения сущности из формы окна
-    fetch() {
-        return this.view.form.getValues()
+    fetch(id) {
+        var task=this.view.form.getValues()
+        
+        task.sch_hours=Number(task.sch_hours)
+        task.fact_hours=Number(task.fact_hours)
+        if (task.sch_hours==0) {
+            task.sch_hours=null;
+        }
+        if (task.fact_hours==0) {
+            task.fact_hours=null;
+        }
+        if (id) {
+            task.fk_progect=id;
+        }
+        if (task.employee=="") {
+            task.fk_employee=null;
+            task.status=TASK_STATUS.new_task
+        }else{
+            task.fk_employee=Number(task.employee)
+            task.status=TASK_STATUS.appointed
+        }
+        console.log(task)
+        return task
     }
 
     // метод размещения сущности в форме окна
@@ -160,12 +182,9 @@ export class CTaskWindow {
     // функция валидации формы
     validate() {
         let isValid = false
-
         // удаление пробелов в полях формы
         this.view.formfields.name.setValue(this.view.formfields.name.getValue().trim())
         this.view.formfields.sch_hours.setValue(this.view.formfields.sch_hours.getValue().trim())
-        this.view.formfields.fact_hours.setValue(this.view.formfields.fact_hours.getValue().trim())
-
         // валидация webix
         isValid = this.view.form.validate()
 
