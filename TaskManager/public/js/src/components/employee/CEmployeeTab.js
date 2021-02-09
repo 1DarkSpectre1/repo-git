@@ -7,14 +7,15 @@ import taskModel from './../../models/taskModel.js';
 // класс таба 'Сотрудники'
 export class CEmployeeTab {
     constructor() {
-        this.refreshControlls   // функция обновления элементов управления в header'е
         this.view               // объект для быстрого доступа к представлениям
         this.window             // экземпляр окна для работы с книгами
        }
 
     // метод инициализации компонента
-    init( refreshControlls,ChangeEmployees) {
-        this.refreshControlls = refreshControlls // функция обновления элементов управления в header'е
+    init(ChangeEmployees) {
+
+        
+
         
          this.window = new CEmployeeWindow(); // инициализация компонента окна
          this.window.init(

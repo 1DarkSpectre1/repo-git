@@ -5,21 +5,24 @@ class TaskModel extends Model {
     constructor() {
         super()
     }
-
+    
+    getCompletedTasksByIDProgect(id) {
+        return this.get(`/task/all/completed/progect/${id}`)
+    }
     getTaskByIDEmployee(id){
         return this.get(`/task/all/employee/${id}`)
     }
-    // получение всех книг
+    // получение всех задач
     getTasksByIDProgect(id) {
         return this.get(`/task/all/progect/${id}`)
     }
 
-    // получение книги по ее ID
+    // получение задачи по ее ID
     getTaskByID(id) {
         return this.get(`/task/${id}`)
     }
 
-    // создание книги
+    // создание задачи
     createTask(task) {
         // task.sch_hours=Number(task.sch_hours)
         // task.fact_hours=0
@@ -33,7 +36,7 @@ class TaskModel extends Model {
         return this.post('/task/create', task)
     }
 
-    // изменение книги
+    // изменение задачи
     updateTask(task) {
         
         // // task.sch_hours=Number(task.sch_hours)
@@ -49,10 +52,10 @@ class TaskModel extends Model {
         return this.post('/task/update', task)
     }
 
-    // удаление книги
+    // удаление задачи
     deleteTask(task) {
-        task.sch_hours=+task.sch_hours
-        task.fact_hours=+task.fact_hours
+        task.sch_hours=Number(task.sch_hours)
+        task.fact_hours=Number(task.fact_hours)
         task.id=task.ID
         return this.post('/task/delete', task)
     }

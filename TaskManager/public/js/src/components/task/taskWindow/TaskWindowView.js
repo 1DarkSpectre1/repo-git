@@ -45,7 +45,7 @@ export default function TaskWindowView(type) {
                     view: 'textarea',
                     id: 'taskWindowFormDescription',
                     label: 'Описание',
-                    name: 'Description',
+                    name: 'description',
                    
                     labelWidth: 150,
                 },
@@ -53,7 +53,7 @@ export default function TaskWindowView(type) {
                     view: 'richselect',
                     id: 'taskWindowFormEmployee',
                     label: 'Сотрудник',
-                    name: 'employee',
+                    name: 'fk_employee',
                     labelWidth: 150,
                     options:[]
                 },

@@ -1,33 +1,41 @@
-import { TaskTabView,TaskTabContextMenu,  TabControllsView } from './TaskTabView.js'
-import { CTaskWindow, TASK_WINDOW_TYPE } from './taskWindow/CTaskWindow.js'
+import {
+    TaskTabView,
+    TaskTabContextMenu,
+    TabControllsView
+} from './TaskTabView.js'
+import {
+    CTaskWindow,
+    TASK_WINDOW_TYPE
+} from './taskWindow/CTaskWindow.js'
 import taskModel from './../../models/taskModel.js'
- import employeeModel from './../../models/employeeModel.js'
- import { Task, TASK_STATUS } from './../../models/entities/task.js'
+import employeeModel from './../../models/employeeModel.js'
+import {
+    Task,
+    TASK_STATUS
+} from './../../models/entities/task.js'
 
 
 // класс таба 'Задачи'
 export class CTaskTab {
     constructor() {
-        this.refreshControlls       // функция обновления элементов управления в header'е
-        this.view                   // объект для быстрого доступа к представлениям
-        this.window                 // экземпляр окна для работы с задачами
-        this.updateEventsDatatable  // функция обновления таблицы событий
-        this.names                  // массив сотрудников в сабменю
-        this.GetSelectProgect
-        
+        this.view // объект для быстрого доступа к представлениям
+        this.window // экземпляр окна для работы с задачами
+        this.names // массив сотрудников в сабменю
+        this.viewProgectDatatable //таблица проектов
+        this.selectProgect
     }
 
     // метод инициализации компонента
-    init( refreshControlls,f) {
-        this.GetSelectProgect=f;
-        this.refreshControlls = refreshControlls            // функция обновления элементов управления в header'е
+    init() {
         this.names = []
         this.window = new CTaskWindow() // инициализация компонента окна
-         this.window.init(
-             () => { this.refreshTable() },
-             this.names
-         ) // вызова инициализации компонента окна
-      //  this.names = [] // массив сотрудников в сабменю
+        this.window.init(
+            () => {
+                this.refreshTable()
+            },
+            this.names
+        ) // вызова инициализации компонента окна
+        //  this.names = [] // массив сотрудников в сабменю
     }
 
     // метод получения webix конфигурации компонента
@@ -49,13 +57,22 @@ export class CTaskTab {
     attachEvents() {
         // инициализация используемых представлений
         this.view = {
-            progectdatatable:$$('progectTabDatatable'),
+            progectdatatable: $$('progectTabDatatable'),
             datatable: $$('taskTabDatatable'),
             datatableContextMenu: $$('taskTabDatatableContextMenu'),
             controlls: $$('tasktab-controlls'),
+            label:{
+                tasks: $$("task-tab-label-tasks"),
+                completedTasks:$$("task-tab-label-completed-tasks"),
+            },
             btns: {
-                playBtn:   $$('tasktab-play-btn'),
-                pauseBtn:  $$('tasktab-pause-btn'),
+                viewingTask: $$('tasktab-viewing-btn'),
+                backTasksbtn: $$('tasktab-backtasks-btn'),
+                completedbtn: $$('tasktab-completed-btn'),
+                checktaskbtn: $$('tasktab-checktask-btn'),
+                finishbtn: $$('tasktab-finish-btn'),
+                playBtn: $$('tasktab-play-btn'),
+                pauseBtn: $$('tasktab-pause-btn'),
                 createBtn: $$('tasktab-add-btn'),
                 updateBtn: $$('tasktab-edit-btn'),
                 deleteBtn: $$('tasktab-remove-btn'),
@@ -63,43 +80,105 @@ export class CTaskTab {
         }
 
 
-        this.view.datatable.attachEvent('onSelectChange', () =>{
-            ///switch()
-            var selected =this.view.datatable.getSelectedItem()
-            if (selected) {   
+        this.view.datatable.attachEvent('onSelectChange', () => {
+
+            var selected = this.view.datatable.getSelectedItem()
+            if (selected) {
                 switch (selected.status) {
-                    case TASK_STATUS.work: // редактирование выделленой задачиbreak
+                    case TASK_STATUS.work:
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.give)
                         this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.start)
                         this.view.btns.playBtn.hide()
                         this.view.datatableContextMenu.enableItem(TASK_CONTEXT_MENU.pause)
                         this.view.btns.pauseBtn.show()
+                        this.view.btns.finishbtn.show()
+                        this.view.btns.checktaskbtn.show()
                         break
-                    case TASK_STATUS.pause: // удаление выделенной задачиbreak
+                    case TASK_STATUS.pause:
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.give)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
+                        this.view.btns.playBtn.show()
+                        this.view.btns.finishbtn.show()
+                        this.view.btns.checktaskbtn.show()
+                        this.view.datatableContextMenu.enableItem(TASK_CONTEXT_MENU.start)
+                        this.view.btns.pauseBtn.hide()
+                        break
                     case TASK_STATUS.appointed:
+                        this.view.datatableContextMenu.enableItem(TASK_CONTEXT_MENU.give)
                         this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
                         this.view.btns.playBtn.show()
                         this.view.datatableContextMenu.enableItem(TASK_CONTEXT_MENU.start)
                         this.view.btns.pauseBtn.hide()
+                        this.view.btns.finishbtn.hide()
+                        this.view.btns.checktaskbtn.hide()
                         break
-                    case TASK_STATUS.new_task:
+                    case TASK_STATUS.not_assigned:
+                        this.view.datatableContextMenu.enableItem(TASK_CONTEXT_MENU.give)
                         this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
                         this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.start)
                         this.view.btns.pauseBtn.hide()
                         this.view.btns.playBtn.hide()
-                        break 
+                        this.view.btns.finishbtn.hide()
+                        this.view.btns.checktaskbtn.hide()
+                        break
+                    case TASK_STATUS.new_task:
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.give)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.start)
+                        this.view.btns.pauseBtn.hide()
+                        this.view.btns.playBtn.hide()
+                        this.view.btns.finishbtn.hide()
+                        this.view.btns.checktaskbtn.hide()
+                        break
+                    case TASK_STATUS.finish:
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.give)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.start)
+                        this.view.btns.pauseBtn.hide()
+                        this.view.btns.playBtn.hide()
+                        this.view.btns.finishbtn.hide()
+                        this.view.btns.checktaskbtn.hide()
+                        break
+                    case TASK_STATUS.approval:
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.give)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.pause)
+                        this.view.datatableContextMenu.disableItem(TASK_CONTEXT_MENU.start)
+                        this.view.btns.pauseBtn.hide()
+                        this.view.btns.playBtn.hide()
+                        this.view.btns.finishbtn.hide()
+                        this.view.btns.checktaskbtn.hide()
+                        break
                     default:
                         break
                 }
             }
         })
+        this.view.btns.viewingTask.attachEvent('onItemClick', () => {
+            this.viewingTask()
+        })
+        // Показ завершенных задачи
+        this.view.btns.backTasksbtn.attachEvent('onItemClick', () => {
+            this.refreshTable()
+        })
+        // Показ завершенных задачи
+        this.view.btns.completedbtn.attachEvent('onItemClick', () => {
+            this.showCompletedTasks()
+        })
+        // Завершение задачи
+        this.view.btns.finishbtn.attachEvent('onItemClick', () => {
+            this.finishTask()
+        })
+        // На согласование 
+        this.view.btns.checktaskbtn.attachEvent('onItemClick', () => {
+            this.approvalTask()
+        })
         // Начало работы задачи
         this.view.btns.playBtn.attachEvent('onItemClick', () => {
-           
-            this.StartTask()
+            this.startTask()
         })
         // Приостановление задачи
-        this.view.btns.pauseBtn.attachEvent('onItemClick', () => {          
-            this.PauseTask()
+        this.view.btns.pauseBtn.attachEvent('onItemClick', () => {
+            this.pauseTask()
         })
         // создание задачи
         this.view.btns.createBtn.attachEvent('onItemClick', () => {
@@ -115,7 +194,7 @@ export class CTaskTab {
         this.view.btns.deleteBtn.attachEvent('onItemClick', () => {
             this.deleteTask()
         })
-
+        
         // отложенное заполнение массива сотрудников в сабменю
         employeeModel.getEmployees().then((employees) => {
             // проверка наличия данных
@@ -124,17 +203,21 @@ export class CTaskTab {
             }
 
             employees.map((employee) => {
-                this.names.push({ ID: employee.id,id: employee.id, value: `${employee.lastname} ${employee.firstname}` })
+                this.names.push({
+                    ID: employee.id,
+                    id: employee.id,
+                    value: `${employee.lastname} ${employee.firstname}`
+                })
             })
         })
 
-         // инициализация обработчиков событий модального окна
-         this.window.attachEvents()
+        // инициализация обработчиков событий модального окна
+        this.window.attachEvents()
 
         // прикрепление контекстного меню к таблице
-         this.view.datatableContextMenu.attachTo(this.view.datatable)
-        
-         // загрузка первичных данных в таблицу
+        this.view.datatableContextMenu.attachTo(this.view.datatable)
+
+        // загрузка первичных данных в таблицу
         // this.refreshTable()
 
         // обработка события нажатия на пункт контекстного меню
@@ -149,21 +232,34 @@ export class CTaskTab {
             }
 
         })
-     }
-ChangeEmployees(){
-    employeeModel.getEmployees().then((employees) => {
-        // проверка наличия данных
-        if (!employees) {
-            return
-        }
-        this.names=[]
-        employees.map((employee) => {
-            this.names.push({ ID: employee.id,id: employee.id, value: `${employee.lastname} ${employee.firstname}` })
+    }
+    //функция для получения таблицы проектов
+    setDatatableProgect(progectdatatable) {
+        this.viewProgectDatatable = progectdatatable
+    }
+    //функция обновление выделенного элемента проекта
+    refreshSelectProgect(selected){
+        this.selectProgect=selected
+    }
+    //обновление масива содрудников
+    RefreshEmployees() {
+        employeeModel.getEmployees().then((employees) => {
+            // проверка наличия данных
+            if (!employees) {
+                return
+            }
+            this.names = []
+            employees.map((employee) => {
+                this.names.push({
+                    ID: employee.id,
+                    id: employee.id,
+                    value: `${employee.lastname} ${employee.firstname}`
+                })
+            })
+            this.view.datatableContextMenu.getItem(TASK_CONTEXT_MENU.give).submenu = this.names
+            this.window.RefreshNames(this.names)
         })
-        this.view.datatableContextMenu.getItem(TASK_CONTEXT_MENU.give).submenu=this.names
-        this.window.RefreshNames(this.names)
-    })
-}
+    }
     // обработка выбора в контекстном меню
     handleContextMenu(item) {
         switch (item) {
@@ -174,10 +270,10 @@ ChangeEmployees(){
                 this.deleteTask()
                 break
             case TASK_CONTEXT_MENU.pause: // Приостановление задачи  
-                this.PauseTask()
+                this.pauseTask()
                 break
             case TASK_CONTEXT_MENU.start: // Начало работы задачи
-                this.StartTask()
+                this.startTask()
                 break
             default:
                 console.error(`Неизвестное значение пункта меню: ${item}.`)
@@ -200,66 +296,58 @@ ChangeEmployees(){
             console.error('Incorrect ID of item:', task.id)
             return
         }
-        
-        task.fk_employee=employee.id
-      //  проверка статуса задачи
-        if (task.status == TASK_STATUS.new_task) {
-            task.status=TASK_STATUS.appointed
+
+        task.fk_employee = employee.id
+        //  проверка статуса задачи
+        if (task.status === TASK_STATUS.not_assigned) {
+            task.status = TASK_STATUS.appointed
         }
         taskModel.updateTask(task).then(() => {
             this.refreshTable()
         })
     }
-    
+
     // функция обновления таблицы задач
     refreshTable() {
-        var selected =$$('progectTabDatatable').getSelectedItem()
-       // console.log(this.GetSelectProgect()) 
-         if (!selected) {
-             return
-         } else {
-          
-       taskModel.getTasksByIDProgect(selected.ID).then((tasks) => {
+        var selected = this.viewProgectDatatable.getSelectedItem()
+        // console.log(this.GetSelectProgect()) 
+        if (!selected) {
+            console.log('Не выбран проект')
+            return
+        } else {
+            this.view.btns.pauseBtn.hide()
+            this.view.btns.playBtn.hide()
+            this.view.btns.finishbtn.hide()
+            this.view.btns.checktaskbtn.hide()
+            this.view.btns.backTasksbtn.hide()
+            this.view.btns.viewingTask.hide()
+            this.view.label.completedTasks.hide()
+            this.view.label.tasks.show()
+            this.view.btns.completedbtn.show()
+            this.view.btns.createBtn.show()
+            this.view.btns.updateBtn.show()
+            this.view.btns.deleteBtn.show()
+            taskModel.getTasksByIDProgect(selected.ID).then((tasks) => {
                 // заполнение таблицы окна данными задачи
                 if (tasks) {
                     tasks.forEach(task => {
-                       // console.log(selected.ID)
-                        task.fk_progect=selected.ID
-                        task.id=task.ID
+                        // console.log(selected.ID)
+                        task.fk_progect = selected.ID
+                        task.id = task.ID
                         //console.log(task)
-                        employeeModel.getEmployeeByID(task.fk_employee).then((employee)=>{
-                            task.employee=`${employee.lastname} ${employee.firstname}`
+                        employeeModel.getEmployeeByID(task.fk_employee).then((employee) => {
+                            task.employee = `${employee.lastname} ${employee.firstname}`
                             this.view.datatable.refresh()
                         })
                     });
                 }
 
-                 this.view.datatable.clearAll()
-                 this.view.datatable.parse(tasks)
-        })
+                this.view.datatable.clearAll()
+                this.view.datatable.parse(tasks)
+            })
+        }
     }
-}
-    
 
-//     // метод отображения таба с фильтрацией по задаче
-//     showByTaskID(taskID) {
-//         taskModel.getTaskByID(taskID).then((task) => {
-//             // проверка наличия данных
-//             if (!task) {
-//                 return
-//             }
-
-//             // выделение нужной строки
-//             for (let rowID = 0; rowID < this.view.datatable.serialize().length; rowID++) {
-//                 let item = this.view.datatable.serialize()[rowID]
-
-//                 if (item.ID === taskID) {
-//                     this.view.datatable.select(item.id)
-//                     break
-//                 }
-//             }
-//         })
-//     }
 
     // функция переключения оторбажения элементов управления таба
     switchControlls() {
@@ -272,7 +360,44 @@ ChangeEmployees(){
                 break;
         }
     }
+    showCompletedTasks() {
+        var selected = $$('progectTabDatatable').getSelectedItem()
+        // console.log(this.GetSelectProgect()) 
+        if (!selected) {
+            console.log('Не выбран проект')
+            return
+        } else {
+            this.view.btns.pauseBtn.hide()
+            this.view.btns.playBtn.hide()
+            this.view.btns.finishbtn.hide()
+            this.view.btns.checktaskbtn.hide()
+            this.view.btns.createBtn.hide()
+            this.view.btns.updateBtn.hide()
+            this.view.btns.completedbtn.hide()
+            this.view.label.tasks.hide()
+            this.view.label.completedTasks.show()
+            this.view.btns.backTasksbtn.show()
+            this.view.btns.viewingTask.show()
+            taskModel.getCompletedTasksByIDProgect(selected.ID).then((tasks) => {
+                // заполнение таблицы окна данными задачи
+                if (tasks) {
+                    tasks.forEach(task => {
+                        // console.log(selected.ID)
+                        task.fk_progect = selected.ID
+                        task.id = task.ID
+                        //console.log(task)
+                        employeeModel.getEmployeeByID(task.fk_employee).then((employee) => {
+                            task.employee = `${employee.lastname} ${employee.firstname}`
+                            this.view.datatable.refresh()
+                        })
+                    });
+                }
 
+                this.view.datatable.clearAll()
+                this.view.datatable.parse(tasks)
+            })
+        }
+    }
     // функция отображения элементов управления таба
     showControlls() {
         this.view.controlls.show()
@@ -282,41 +407,94 @@ ChangeEmployees(){
     hideControlls() {
         this.view.controlls.hide()
     }
+    //функция просмотра задачи
+    viewingTask() {
+        // получение выделенного элемента
+        let selected = this.view.datatable.getSelectedItem()
 
- //функция начала работы задачи
- StartTask(){
-    let selected = this.view.datatable.getSelectedItem()
-    if (!selected) {
-        webix.message('Выделите строку')
-        return
+        if (!selected) {
+            webix.message('Выделите строку')
+            return
+        }
+        if (!selected.ID) {
+            console.error('id of item is ', selected.ID)
+            return
+        }
+        //selected.employee=selected.fk_employee
+        // заполнение полей окна данными задачи
+        this.window.parse(selected)
+        this.window.switch(TASK_WINDOW_TYPE.viewing)
+        // })
     }
-    if (!selected.id) {
-        console.error('Incorrect ID of item:', selected.id)
-        return
+    //функция завершения задачи
+    finishTask() {
+        let selected = this.view.datatable.getSelectedItem()
+        if (!selected) {
+            webix.message('Выделите строку')
+            return
+        }
+        if (!selected.id) {
+            console.error('Incorrect ID of item:', selected.id)
+            return
+        }
+        //console.log(selected.fact_hours)
+        if (selected.fact_hours===0||selected.fact_hours===null) {
+            webix.message('Заполните факт часы')
+            return
+        }
+        selected.status = TASK_STATUS.finish
+        taskModel.updateTask(selected).then(() => {
+            this.refreshTable()
+        })
     }
-    selected.status=TASK_STATUS.work
-    taskModel.updateTask(selected).then(() => {
-        this.refreshTable()
-        this.view.btns.playBtn.hide()
-    })
-}
-//функция приостановления работы задачи
-PauseTask(){
-    let selected = this.view.datatable.getSelectedItem()
-    if (!selected) {
-        webix.message('Выделите строку')
-        return
+    //функция отравления задачи на согласование
+    approvalTask() {
+        let selected = this.view.datatable.getSelectedItem()
+        if (!selected) {
+            webix.message('Выделите строку')
+            return
+        }
+        if (!selected.id) {
+            console.error('Incorrect ID of item:', selected.id)
+            return
+        }
+        selected.status = TASK_STATUS.approval
+        taskModel.updateTask(selected).then(() => {
+            this.refreshTable()
+        })
     }
-    if (!selected.id) {
-        console.error('Incorrect ID of item:', selected.id)
-        return
+    //функция начала работы задачи
+    startTask() {
+        let selected = this.view.datatable.getSelectedItem()
+        if (!selected) {
+            webix.message('Выделите строку')
+            return
+        }
+        if (!selected.id) {
+            console.error('Incorrect ID of item:', selected.id)
+            return
+        }
+        selected.status = TASK_STATUS.work
+        taskModel.updateTask(selected).then(() => {
+            this.refreshTable()
+        })
     }
-    selected.status=TASK_STATUS.pause
-    taskModel.updateTask(selected).then(() => {
-        this.refreshTable()
-        this.view.btns.pauseBtn.hide()
-    })
-}
+    //функция приостановления работы задачи
+    pauseTask() {
+        let selected = this.view.datatable.getSelectedItem()
+        if (!selected) {
+            webix.message('Выделите строку')
+            return
+        }
+        if (!selected.id) {
+            console.error('Incorrect ID of item:', selected.id)
+            return
+        }
+        selected.status = TASK_STATUS.pause
+        taskModel.updateTask(selected).then(() => {
+            this.refreshTable()
+        })
+    }
     // функция создания задачи
     createTask(id) {
         this.window.parse(new Task())
@@ -327,7 +505,7 @@ PauseTask(){
     updateTask() {
         // получение выделенного элемента
         let selected = this.view.datatable.getSelectedItem()
-       
+
         // проверка выделенного элемента
         if (!selected) {
             webix.message('Выделите строку')
@@ -338,21 +516,21 @@ PauseTask(){
             console.error('Incorrect ID of item:', selected.ID)
             return
         }
-        
+
         taskModel.getTaskByID(selected.ID).then((task) => {
             // проверка наличия данных
             if (!task) {
                 return
             }
-            
+
             // заполнение полей окна данными задачи
-            
-             selected.employee=selected.fk_employee
-             this.window.parse(selected)
-             this.window.switch(TASK_WINDOW_TYPE.update)
+
+            //  selected.employee=selected.fk_employee
+            this.window.parse(selected)
+            this.window.switch(TASK_WINDOW_TYPE.update, selected.status)
         })
     }
-   
+
     // функция удаления задачи
     deleteTask() {
         // получение выделенного элемента
@@ -366,20 +544,21 @@ PauseTask(){
             console.error('id of item is ', selected.ID)
             return
         }
-            selected.employee=selected.fk_employee
-             // заполнение полей окна данными задачи
-             this.window.parse(selected)
-             this.window.switch(TASK_WINDOW_TYPE.delete)
+        //selected.employee=selected.fk_employee
+        // заполнение полей окна данными задачи
+        this.window.parse(selected)
+        this.window.switch(TASK_WINDOW_TYPE.delete)
         // })
     }
- }
+
+}
 
 // допустимые значения пунктов контекстного меню таба задачи
 export const TASK_CONTEXT_MENU = {
     give: 'Назначить',
-    start:'Начать работу',
-    pause:'Приостановить',
+    start: 'Начать работу',
+    pause: 'Приостановить',
     add: 'Добавить',
     edit: 'Изменить',
     remove: 'Удалить'
- }
+}

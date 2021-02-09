@@ -1,29 +1,41 @@
-import { ProgectTabView,  ProgectTabContextMenu, TabControllsView } from './ProgectTabView.js';
-import { CProgectWindow, PROGECT_WINDOW_TYPE } from './ProgectWindow/CProgectWindow.js';
-import { Progect } from './../../models/entities/progect.js'
+import {
+    ProgectTabView,
+    ProgectTabContextMenu,
+    TabControllsView
+} from './ProgectTabView.js';
+import {
+    CProgectWindow,
+    PROGECT_WINDOW_TYPE
+} from './ProgectWindow/CProgectWindow.js';
+import {
+    Progect
+} from './../../models/entities/progect.js'
 import progectModel from './../../models/progectModel.js';
 import employeeModel from './../../models/employeeModel.js';
 import taskModel from './../../models/taskModel.js';
-import { CTaskTab } from './../task/CTaskTab.js'
+import {
+    CTaskTab
+} from './../task/CTaskTab.js'
 import authModel from '../../models/authModel.js'
 // класс таба 'Сотрудники'
 export class CProgectTab {
     constructor() {
-        this.refreshControlls   // функция обновления элементов управления в header'е
-        this.view               // объект для быстрого доступа к представлениям
-        this.window             // экземпляр окна для работы с книгами 
+        this.refreshControlls // функция обновления элементов управления в header'е
+        this.view // объект для быстрого доступа к представлениям
+        this.window // экземпляр окна для работы с книгами 
         this.refreshTableTask
-        this.currentProgect
+        this.refreshSelectProgect
         this.currentEmployee
     }
-    init( refreshControlls,refreshTableTask,f) {
-        f=this.currentProgect
-        this.refreshControlls = refreshControlls // функция обновления элементов управления в header'е
-        this.refreshTableTask  = refreshTableTask //функция обновления таблицы
-         this.window = new CProgectWindow(); // инициализация компонента окна
-         this.window.init(
-             () => { this.refreshTable() }
-         ) // вызова инициализации компонента окна
+    init(refreshTableTask,refreshSelectProgect) {
+        this.refreshSelectProgect=refreshSelectProgect
+        this.refreshTableTask = refreshTableTask //функция обновления таблицы
+        this.window = new CProgectWindow(); // инициализация компонента окна
+        this.window.init(
+            () => {
+                this.refreshTable()
+            }
+        ) // вызова инициализации компонента окна
 
     }
 
@@ -40,7 +52,7 @@ export class CProgectTab {
     configTabControlls() {
         return TabControllsView()
     }
-    
+
     attachEvents() {
         // инициализация используемых представлений
         this.view = {
@@ -54,7 +66,8 @@ export class CProgectTab {
             }
         }
         //обновление таблицы задач при изменении проекта
-        this.view.datatable.attachEvent('onSelectChange', () =>{
+        this.view.datatable.attachEvent('onSelectChange', () => {
+            this.refreshSelectProgect()
             this.refreshTableTask()
         })
         // создание сотрудника
@@ -71,12 +84,12 @@ export class CProgectTab {
         this.view.btns.deleteBtn.attachEvent('onItemClick', () => {
             this.deleteProgect()
         })
-         // инициализация обработчиков событий модального окна
-         this.window.attachEvents()
+        // инициализация обработчиков событий модального окна
+        this.window.attachEvents()
 
         // прикрепление контекстного меню к таблице
         this.view.datatableContextMenu.attachTo(this.view.datatable)
-         // загрузка первичных данных в таблицу
+        // загрузка первичных данных в таблицу
         this.refreshTable()
 
         // обработка события нажатия на пункт контекстного меню
@@ -94,22 +107,25 @@ export class CProgectTab {
             this.currentEmployee = emp
         })
     }
-     refreshTable() {
-      
-        
-            progectModel.getProgects().then((progects) => {
-                progects.forEach(progect => {
-                    employeeModel.getEmployeeByID(progect.fk_employee).then((employee)=>{
-                        progect.employee=`${employee.lastname} ${employee.firstname}`
-                        this.view.datatable.refresh()
-                    })
-                });
-                this.view.datatable.clearAll()
-                this.view.datatable.parse(progects)
-            })
-       // }
+    getCurrentProgect(){
+        return this.currentProgect
     }
-    
+    refreshTable() {
+
+
+        progectModel.getProgects().then((progects) => {
+            progects.forEach(progect => {
+                employeeModel.getEmployeeByID(progect.fk_employee).then((employee) => {
+                    progect.employee = `${employee.lastname} ${employee.firstname}`
+                    this.view.datatable.refresh()
+                })
+            });
+            this.view.datatable.clearAll()
+            this.view.datatable.parse(progects)
+        })
+        // }
+    }
+
     switchControlls() {
         switch (this.view.controlls.isVisible()) {
             case true:
@@ -129,12 +145,12 @@ export class CProgectTab {
     // функция сокрытия элементов управления таба
     hideControlls() {
         this.view.controlls.hide()
-     }
-      // // функция создания сотрудника
+    }
+    // // функция создания сотрудника
     createProgect() {
-       var newProgect =new Progect()
-            newProgect.fk_employee=this.currentEmployee.id
-            newProgect.employee=`${this.currentEmployee.lastname} ${this.currentEmployee.firstname}`
+        var newProgect = new Progect()
+        newProgect.fk_employee = this.currentEmployee.id
+        newProgect.employee = `${this.currentEmployee.lastname} ${this.currentEmployee.firstname}`
 
         this.window.parse(newProgect)
         this.window.switch(PROGECT_WINDOW_TYPE.create)
@@ -158,9 +174,9 @@ export class CProgectTab {
         //     if (!employee) {
         //         return
         //     }
-            this.window.parse(selected)
-            this.window.switch(PROGECT_WINDOW_TYPE.update)
-       // })
+        this.window.parse(selected)
+        this.window.switch(PROGECT_WINDOW_TYPE.update)
+        // })
     }
     handleContextMenu(item) {
         switch (item) {
@@ -197,7 +213,7 @@ export class CProgectTab {
             }
             this.window.parse(selected)
             this.window.switch(PROGECT_WINDOW_TYPE.delete)
-    })
+        })
 
     }
 }

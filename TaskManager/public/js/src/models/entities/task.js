@@ -14,9 +14,11 @@ export class Task {
 
 // допустимые статусы книги
 export let TASK_STATUS = {
-    new_task: 'Не назначена',
+    new_task:'Новая задача',
+    not_assigned: 'Не назначена',
     appointed: 'Назначена',
     work: 'В работе',
     pause:'Приостановлена',
-    performed:'выполнена',
+    approval:'На согласовании',
+    finish:'Выполнена',
 }

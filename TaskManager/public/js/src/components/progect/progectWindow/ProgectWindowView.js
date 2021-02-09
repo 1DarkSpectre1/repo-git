@@ -45,7 +45,6 @@ export default function ProgectWindowView(type) {
                     id: 'progectWindowFormDescription',
                     label: 'Описание',
                     name: 'description',
-                    required: true,
                     labelWidth: 150,
                 },
                 {

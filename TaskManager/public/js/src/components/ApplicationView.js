@@ -14,13 +14,17 @@ export default function WorkedPlaceView(taskTab, employeeTab, progectTab, userIn
                       view: "sidebar",
                      
                       id:"main-tabbar",
-                      data: menu_data,
+                      data: [
+                        {id:"ProgectTabView", value:"Проекты",icon: "mdi mdi-view-dashboard"},
+                            {id: "TaskTabView", value:"Задачи",icon: "mdi mdi-table"},
+                            {id: "EmployeeTabView", value:"Сотрудники",icon:"mdi mdi-account"},
+                        ],
                       collapsed:true,
                       
                     },
-                    {id:"form1",visibleBatch:"ProgectTabView", rows:[
+                    {id:'main',visibleBatch:"ProgectTabView", rows:[
                         {
-                            id: 'main',         
+                            id: 'main-tab',         
                             height:35,
                             cols: [                             
                                 {

@@ -17,7 +17,6 @@ export class Application {
         this.employeeTab = new CEmployeeTab()   // экземпляр контроллера сотрудников
         this.progectTab = new CProgectTab()     // экземпляр контроллера событий
         this.mainWindow = new CMainWindow()    // окно входа в приложение
-        this.selectProgect
     }
     init() {
          // инициализация компонента информации о пользователе
@@ -27,22 +26,18 @@ export class Application {
                 location.replace('/user/logout')
              }, // onLogout
          )
-         var f=this.refreshSelectProgect
+         
         // инициализация компонента вкладки событий
         this.progectTab.init(
-            (config) => { this.refreshControlls(config) }, // refreshControlls
+            ()=>{this.refreshSelectProgect()},       
             ()=>{this.taskTab.refreshTable()},
-            
         )
          // инициализация компонента вкладки книг
         this.taskTab.init(
-            (config) => { this.refreshControlls(config) }, // refreshControll
-            f
         )
         // инициализация компонента вкладки сотрудников
         this.employeeTab.init(
-            (config) => { this.refreshControlls(config) }, // refreshControlls
-            ()=>{this.taskTab.ChangeEmployees()}
+            ()=>{this.taskTab.RefreshEmployees()}
         )
 
         
@@ -61,11 +56,11 @@ export class Application {
 
     attachEvents() {
         this.view = {
+            main: $$('main'),
             tabbar: $$('main-tabbar'),
             multiviews: $$('main-views'),
             workedPlace: $$('workedPlace'),
-            tabControllsContainer: $$('main'),
-            datatable: $$('progectTabDatatable'),
+            tabControllsContainer: $$("tab-controlls"),
         }
 
         // компоненты требующие авторизации
@@ -81,23 +76,38 @@ export class Application {
 
                 // обработчики событий компонентов
                  this.userInfo.attachEvents()
-                 this.taskTab.attachEvents()
                  this.employeeTab.attachEvents()
                  this.progectTab.attachEvents()
+                 this.taskTab.attachEvents()
+
+                 this.taskTab.setDatatableProgect(this.progectTab.view.datatable)
+                
                  // переключение таба
                 this.view.tabbar.attachEvent('onAfterSelect', (id) =>{
-                        
-                        if (!this.view.datatable.getSelectedItem()) {
-                            if(!(id=='ProgectTabView')){
-                                $$(this.view.tabbar).select('ProgectTabView');  
-                                webix.message("Выберите проект")                     
-                            }
-                            
-                            return 
+                        switch (id) {
+                            case MENU.progectsTab:
+                                this.view.main.showBatch(id);
+                                this.view.tabControllsContainer.showBatch(id);
+                                break;
+                            case MENU.tasksTab:
+                                if (!this.progectTab.view.datatable.getSelectedItem()) {
+                                $$(this.view.tabbar).select(MENU.progectsTab);  
+                                webix.message("Выберите проект") 
+                                return                    
+                                }
+                                    this.view.main.showBatch(id);
+                                    this.view.tabControllsContainer.showBatch(id);
+                                break;
+                            case MENU.employeeTab:
+                                this.view.main.showBatch(id);
+                                this.view.tabControllsContainer.showBatch(id);
+                                break;
+                            default:
+                                break;
                         }
                         
-                        $$("form1").showBatch(id);
-                        $$("tab-controlls").showBatch(id);
+                        
+                        
                       }
                     
                 )
@@ -113,19 +123,17 @@ export class Application {
          this.view.workedPlace.hide()
          this.mainWindow.switch(this.view.workedPlace)
     }
-   refreshSelectProgect(){
-     //console.log( this.progectTab.GetSelectProgect())
-       return  'progectTabDatatable'
-
-   }
-
+    refreshSelectProgect()
+    {
+        var selected=this.progectTab.view.datatable.getSelectedItem()
+        this.taskTab.refreshSelectProgect(selected)
+    }
     refreshControlls(config) {
         webix.ui(config, this.view.tabControllsContainer, $$('tab-controlls'))
     }
 }
-// константы перечисления табов(id представления)
-export const APP_TAB = {
-    tasksTab: 'taskTab',
-    employeesTab: 'employeeTab',
-    progectsTab: 'progectTab',
+export const MENU = {
+    progectsTab:"ProgectTabView",
+    tasksTab:"TaskTabView",
+    employeeTab:"EmployeeTabView",
 }
