@@ -63,6 +63,7 @@ func (m *MProgect) SelectAll() (es []*ProgectDBType, err error) {
 			c_name,
 			c_description		
 		FROM "task_manager".t_progects
+		WHERE is_archive=0
 		ORDER BY pk_id;
 	`
 
@@ -158,12 +159,14 @@ func (m *MProgect) Insert(edbt *ProgectDBType) (id int64, err error) {
 		INSERT INTO "task_manager".t_Progects(
 			fk_employee,
 			c_name,
-			c_description
+			c_description,
+			is_archive
 		)
 		VALUES(
 			$1,	-- fk_employee
 			$2,	-- c_name
-			$3	-- c_description
+			$3,	-- c_description
+			0
 		)
 		returning pk_id;
 	`
@@ -236,7 +239,9 @@ func (m *MProgect) Delete(edbt *ProgectDBType) (err error) {
 
 	// запрос
 	query = `
-	DELETE FROM task_manager.t_progects 
+	UPDATE "task_manager".t_Progects
+		SET 
+		is_archive=1
 		WHERE pk_id = $1;
 	`
 

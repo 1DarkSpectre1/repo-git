@@ -75,7 +75,7 @@ func (m *MEmployee) SelectAll() (es []*EmployeeDBType, err error) {
 			c_phone_number,
 			c_email
 		FROM "task_manager".t_employees
-		
+		WHERE is_archive=0 
 		ORDER BY pk_id;
 	`
 
@@ -183,7 +183,8 @@ func (m *MEmployee) Insert(edbt *EmployeeDBType) (id int64, err error) {
 			c_lastname,
 			c_middlename,
 			c_phone_number,
-			c_email
+			c_email,
+			is_archive
 		)
 		VALUES(
 			$1,	-- fk_position
@@ -191,7 +192,8 @@ func (m *MEmployee) Insert(edbt *EmployeeDBType) (id int64, err error) {
 			$3,	-- c_lastname
 			$4,	-- c_middlename
 			$5,	-- c_phone_number
-			$6	-- c_email
+			$6,	-- c_email
+			0
 		)
 		returning pk_id;
 	`
@@ -272,8 +274,10 @@ func (m *MEmployee) Delete(edbt *EmployeeDBType) (err error) {
 
 	// запрос
 	query = `
-	DELETE FROM task_manager.t_employees 
-		WHERE pk_id = $1;
+	UPDATE task_manager.t_employees 
+	SET 
+	is_archive=1
+	WHERE pk_id = $1;
 	`
 
 	// выполнение запроса

@@ -8,7 +8,7 @@ import (
 	"github.com/revel/revel"
 )
 
-// PTAsk провайдер контроллера книг
+// PTAsk провайдер контроллера задач
 type PTask struct {
 	taskMapper       *mappers.MTask
 	taskStatusMapper *mappers.MTaskStatus
@@ -25,24 +25,24 @@ func (p *PTask) Init() (err error) {
 		return err
 	}
 
-	// инициализация маппера книг
+	// инициализация маппера задач
 	p.taskMapper = new(mappers.MTask)
 	p.taskMapper.Init(db)
 
-	// инициализация маппера статусов книг
+	// инициализация маппера статусов задач
 	p.taskStatusMapper = new(mappers.MTaskStatus)
 	p.taskStatusMapper.Init(db)
 
 	return
 }
 
-// GetTAskByID метод получения книги по id
+// GetTAskByID метод получения задачи по id
 func (p *PTask) GetTaskByID(id int64) (b *entities.Task, err error) {
 	var (
 		bdbt *mappers.TaskDBType
 	)
 
-	// получение данных книги
+	// получение данных задачи
 	bdbt, err = p.taskMapper.SelectByID(id)
 	if err != nil {
 		revel.AppLog.Errorf("PTask.GetTaskByID : p.taskMapper.SelectByID, %s\n", err)
@@ -66,14 +66,14 @@ func (p *PTask) GetTaskByID(id int64) (b *entities.Task, err error) {
 	return
 }
 
-// GetTAsks метод получения книг
+// GetTasksByProgectID метод получения задач
 func (p *PTask) GetTasksByProgectID(id int64) (bs []*entities.Task, err error) {
 	var (
 		bdbts []*mappers.TaskDBType
 		b     *entities.Task
 	)
 
-	// получение данных книг
+	// получение данных 
 	bdbts, err = p.taskMapper.SelectAllByProgectID(id )
 	if err != nil {
 		revel.AppLog.Errorf("PTask.GetTasksByProgectID : p.taskMapper.SelectAll, %s\n", err)
@@ -100,15 +100,48 @@ func (p *PTask) GetTasksByProgectID(id int64) (bs []*entities.Task, err error) {
 
 	return
 }
+// GetTasksByProgectID метод получения задач
+func (p *PTask) GetCompletedTasksByProgectID(id int64) (bs []*entities.Task, err error) {
+	var (
+		bdbts []*mappers.TaskDBType
+		b     *entities.Task
+	)
 
-// GetTAsks метод получения книг
+	// получение данных 
+	bdbts, err = p.taskMapper.SelectAllCompletedlTasksByProgectID(id )
+	if err != nil {
+		revel.AppLog.Errorf("PTask.GetTasksByProgectID : p.taskMapper.SelectAll, %s\n", err)
+		return
+	}
+
+	for _, bdbt := range bdbts {
+		// преобразование к типу сущности
+		b, err = bdbt.ToType()
+		if err != nil {
+			revel.AppLog.Errorf("PTask.GetTasksByProgectID : bdbt.ToType, %s\n", err)
+			return
+		}
+
+		// получение значения статуса по ключу
+		b.Status, err = p.taskStatusMapper.StatusByID(bdbt.Fk_status)
+		if err != nil {
+			revel.AppLog.Errorf("PTask.GetTasksByProgectID : p.taskStatusMapper.StatusByID, %s\n", err)
+			return
+		}
+		
+		bs = append(bs, b)
+	}
+
+	return
+}
+// GetTAsks метод получения задач
 func (p *PTask) GetTasksByEmployeeID(id int64) (bs []*entities.Task, err error) {
 	var (
 		bdbts []*mappers.TaskDBType
 		b     *entities.Task
 	)
 
-	// получение данных книг
+	// получение данных задач
 	bdbts, err = p.taskMapper.SelectAllByEmployeeID(id )
 	if err != nil {
 		revel.AppLog.Errorf("PTask.GetTasksByEmployeeID : p.taskMapper.SelectAllByEmployeeID, %s\n", err)
@@ -136,7 +169,7 @@ func (p *PTask) GetTasksByEmployeeID(id int64) (bs []*entities.Task, err error) 
 	return
 }
 
-// CreateTAsk метод создания книги
+// CreateTAsk метод создания задачи
 func (p *PTask) CreateTask(task *entities.Task) (b *entities.Task, err error) {
 	var (
 		bdbt *mappers.TaskDBType
@@ -156,7 +189,7 @@ func (p *PTask) CreateTask(task *entities.Task) (b *entities.Task, err error) {
 		return
 	}
 	
-	// добавление книги
+	// добавление задачи
 	task.ID, err = p.taskMapper.Insert(bdbt)
 	if err != nil {
 		revel.AppLog.Errorf("PTask.CreateTask : p.taskMapper.Insert, %s\n", err)
@@ -166,7 +199,7 @@ func (p *PTask) CreateTask(task *entities.Task) (b *entities.Task, err error) {
 	return task, nil
 }
 
-// UpdateTAsk метод обновления книги
+// UpdateTAsk метод обновления задачи
 func (p *PTask) UpdateTask(task *entities.Task) (b *entities.Task, err error) {
 	var (
 		bdbt *mappers.TaskDBType
@@ -186,7 +219,7 @@ func (p *PTask) UpdateTask(task *entities.Task) (b *entities.Task, err error) {
 		return
 	}
 
-	// обновление книги
+	// обновление задачи
 	err = p.taskMapper.Update(bdbt)
 	if err != nil {
 		revel.AppLog.Errorf("PTask.UpdateTask : p.taskMapper.Update, %s\n", err)
@@ -196,7 +229,7 @@ func (p *PTask) UpdateTask(task *entities.Task) (b *entities.Task, err error) {
 	return task, nil
 }
 
-// DeleteTAsk метод удаления книги
+// DeleteTAsk метод удаления задачи
 func (p *PTask) DeleteTask(task *entities.Task) (err error) {
 	var (
 		bdbt *mappers.TaskDBType
@@ -209,7 +242,7 @@ func (p *PTask) DeleteTask(task *entities.Task) (err error) {
 		return
 	}
 
-	// удаление книги
+	// удаление задачи
 	err = p.taskMapper.Delete(bdbt)
 	if err != nil {
 		revel.AppLog.Errorf("PTask.DeleteTask : p.taskMapper.Delete, %s\n", err)

@@ -6,6 +6,7 @@ package entities
 type Task struct {
 	ID         		int64      `json:"ID"`        // идентификатор
 	Name       		string     `json:"name"`      // название 
+	Description     *string     `json:"description"` //описание
 	Sch_hours  		*float32    `json:"sch_hours"`    // план часы
 	Fact_hours 		*float32    `json:"fact_hours"` // факт часы
 	Status          string 	   `json:"status"`    // статус 
