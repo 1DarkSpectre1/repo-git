@@ -1,6 +1,8 @@
 import TaskWindowView from './TaskWindowView.js'
 import taskModel from './../../../models/taskModel.js'
-import {TASK_STATUS} from '../../../models/entities/task.js'
+import {
+    TASK_STATUS
+} from '../../../models/entities/task.js'
 
 // компонент окна для работы с сущностью книги
 export class CTaskWindow {
@@ -57,8 +59,7 @@ export class CTaskWindow {
             var selected = this.view.progectdatatable.getSelectedItem()
             switch (this.type) {
                 case TASK_WINDOW_TYPE.create:
-                    task = this.view.form.getValues()
-                    var task = this.createFromType(selected.ID, task)
+                    var task = this.createFromType(selected.ID, this.fetch())
                     taskModel.createTask(task).then(() => {
                         this.onChange()
                         //webix.message("Создание задачи")
@@ -66,8 +67,8 @@ export class CTaskWindow {
                     })
                     break;
                 case TASK_WINDOW_TYPE.update:
-                    //ДОБАВИТЬ ИЗМЕНЕНИЯ//
-                    taskModel.updateTask(this.fetch()).then(() => {
+                    task = this.updateTaskType(this.fetch())
+                    taskModel.updateTask(task).then(() => {
                         this.onChange()
                         // webix.message("Изменение задачи")
                         this.hide()
@@ -143,7 +144,7 @@ export class CTaskWindow {
                 this.view.windowConfirmBtn.show()
                 this.view.window.resize()
                 break;
-                case TASK_WINDOW_TYPE.viewing:
+            case TASK_WINDOW_TYPE.viewing:
                 this.view.windowLabel.setHTML('Просмотр задачи')
                 this.view.formfields.fact_hours.show()
                 this.view.formfields.status.show()
@@ -156,7 +157,7 @@ export class CTaskWindow {
                 this.view.formfields.fact_hours.disable()
                 this.view.windowConfirmBtn.hide()
                 this.view.window.resize()
-                    break;
+                break;
             default:
                 console.error('Неизвестный тип отображения окна для работы с сущностью задачи');
                 return;
@@ -254,6 +255,53 @@ export class CTaskWindow {
                 break;
         }
     }
+    //обработка данных перед отправко1 на back
+    updateTaskType(task) {
+        //console.log(task)
+        switch (task.status) {
+            case TASK_STATUS.new_task:
+                task.sch_hours = Number(task.sch_hours)
+                task.fact_hours = null;
+                task.fk_employee = null;
+                if (task.sch_hours === 0) {
+                    task.sch_hours = null;
+                    task.status = TASK_STATUS.new_task;
+                } else {
+                    task.status = TASK_STATUS.not_assigned;
+                }
+                return task
+            case TASK_STATUS.not_assigned:
+                task.sch_hours = Number(task.sch_hours)
+                task.fact_hours = null;
+                task.fk_employee = Number(task.fk_employee)
+                if (task.fk_employee === 0) {
+                    task.fk_employee = null;
+                    task.status = TASK_STATUS.not_assigned;
+                } else {
+                    task.status = TASK_STATUS.appointed;
+                }
+                return task
+            case TASK_STATUS.appointed:
+                task.sch_hours = Number(task.sch_hours)
+                task.fact_hours = null;
+                task.fk_employee = Number(task.fk_employee)
+                return task
+            case TASK_STATUS.work:
+            case TASK_STATUS.pause:
+                task.sch_hours = Number(task.sch_hours)
+                task.fact_hours = Number(task.fact_hours)
+                task.fk_employee = Number(task.fk_employee)
+                return task
+            case TASK_STATUS.approval:
+                task.sch_hours = Number(task.sch_hours)
+                task.fact_hours = Number(task.fact_hours)
+                task.fk_employee = Number(task.fk_employee)
+                return task
+            default:
+                console.log('Неизвестный статус: ', status)
+                break;
+        }
+    }
     //метод подготовки данных   
     createFromType(id, task) {
         task.sch_hours = Number(task.sch_hours)
@@ -269,39 +317,14 @@ export class CTaskWindow {
         if (task.fact_hours === 0) {
             task.fact_hours = null;
         }
-        console.log(task)
         return task
     }
     // метод получения сущности из формы окна
-    fetch(id) {
+    fetch() {
         var task = this.view.form.getValues()
-        if (task.status === TASK_STATUS.approval) {
+            task.fact_hours=Number(task.fact_hours)
             task.sch_hours = Number(task.sch_hours)
-            task.fact_hours = null
-            task.status=TASK_STATUS.appointed
             task.fk_employee = Number(task.fk_employee)
-
-        } else {
-            task.sch_hours = Number(task.sch_hours)
-            task.fact_hours = Number(task.fact_hours)
-            if (task.sch_hours === 0) {
-                task.sch_hours = null;
-            }
-            if (task.fact_hours === 0) {
-                task.fact_hours = null;
-            }
-            if (id) {
-                task.fk_progect = id;
-            }
-            if (task.fk_employee === "") {
-                task.fk_employee = null;
-                task.status = TASK_STATUS.not_assigned
-            } else {
-                task.fk_employee = Number(task.fk_employee)
-                task.status = TASK_STATUS.appointed
-            }
-        }
-        console.log(task)
         return task
     }
 
@@ -319,15 +342,14 @@ export class CTaskWindow {
         // валидация webix
         isValid = this.view.form.validate()
         if (isValid) {
-            if (this.view.formfields.sch_hours.getValue()==="") {
+            if (this.view.formfields.sch_hours.getValue() === "") {
                 return isValid
             }
-           if ((isNaN(this.view.formfields.sch_hours.getValue())||(Number(this.view.formfields.sch_hours.getValue())===0))) {
-               webix.message('Введено некоректное значение поля "План часы"', 'error')
-               isValid=false
-           } 
-           console.log(Number(this.view.formfields.sch_hours.getValue()))
-        }else{
+            if ((isNaN(this.view.formfields.sch_hours.getValue()) || (Number(this.view.formfields.sch_hours.getValue()) === 0))) {
+                webix.message('Введено некоректное значение поля "План часы"', 'error')
+                isValid = false
+            }
+        } else {
             webix.message('Заполните поля отмеченные *', 'error')
         }
         return isValid
