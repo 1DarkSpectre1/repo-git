@@ -1,0 +1,108 @@
+SELECT   c_lastname, c_firstname, c_middlename, c_phone_number, c_email
+	FROM task_manager.t_employees,task_manager.toc_emploees_projects
+	
+	WHERE t_employees.pk_id=toc_emploees_projects.fk_employees and 1=toc_emploees_projects.fk_progects;
+	
+	////////////////////////////////////
+CREATE SCHEMA task_manager
+    AUTHORIZATION postgres;
+	
+	CREATE TABLE task_manager.t_tasks (
+	"pk_id" serial NOT NULL,
+	"c_name" varchar(100) NOT NULL,
+	"c_sch_hours" float4 NOT NULL,
+	"c_fact_hours" float4 ,
+	"fk_status" int NOT NULL,
+	"fk_prog" int NOT NULL,
+	"fk_employees" int ,
+	CONSTRAINT "t_tasks_pk" PRIMARY KEY ("pk_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE task_manager.t_status (
+	"pk_id" serial NOT NULL,
+	"name" varchar(50) NOT NULL,
+	CONSTRAINT "t_status_pk" PRIMARY KEY ("pk_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE task_manager.t_employees (
+	"pk_id" serial NOT NULL,
+	"fk_position" int NOT NULL,
+	"c_lastname" varchar(50) NOT NULL,
+	"c_firstname" varchar(50) NOT NULL,
+	"c_middlename" varchar(50) ,
+	"c_phone_number" varchar(50) ,
+	"c_email" varchar(50) ,
+	CONSTRAINT "t_employees_pk" PRIMARY KEY ("pk_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE task_manager.ref_positions (
+	"pk_id" serial NOT NULL,
+	"name_position" varchar(50) NOT NULL,
+	CONSTRAINT "ref_positions_pk" PRIMARY KEY ("pk_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE task_manager.t_users (
+	"pk_id" serial NOT NULL,
+	"password" varchar(50) NOT NULL,
+	"login" varchar(50) NOT NULL,
+	"fk_employee" int NOT NULL,
+	CONSTRAINT "t_users_pk" PRIMARY KEY ("pk_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE task_manager.t_projects (
+	"pk_id" serial NOT NULL,
+	"name" varchar(50) NOT NULL,
+	"description" varchar(100) NOT NULL,
+	"fk_employee" int NOT NULL,
+	CONSTRAINT "t_ projects_pk" PRIMARY KEY ("pk_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE task_manager.toc_emploees_projects (
+	"pk_id" serial NOT NULL,
+	"fk_progects" int NOT NULL,
+	"fk_employees" int NOT NULL,
+	CONSTRAINT "toc_emploees_projects_pk" PRIMARY KEY ("pk_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+ALTER TABLE task_manager.t_tasks ADD CONSTRAINT "t_tasks_fk0" FOREIGN KEY ("fk_status") REFERENCES task_manager.t_status("pk_id");
+ALTER TABLE task_manager.t_tasks ADD CONSTRAINT "t_tasks_fk1" FOREIGN KEY ("fk_prog") REFERENCES task_manager.t_projects("pk_id");
+ALTER TABLE task_manager.t_tasks ADD CONSTRAINT "t_tasks_fk2" FOREIGN KEY ("fk_employees") REFERENCES task_manager.t_employees("pk_id");
+
+
+ALTER TABLE task_manager.t_employees ADD CONSTRAINT "t_employees_fk0" FOREIGN KEY ("fk_position") REFERENCES task_manager.ref_positions("pk_id");
+
+
+ALTER TABLE task_manager.t_users ADD CONSTRAINT "t_users_fk0" FOREIGN KEY ("fk_employee") REFERENCES task_manager.t_employees("pk_id");
+
+ALTER TABLE task_manager.t_projects ADD CONSTRAINT "t_ projects_fk0" FOREIGN KEY ("fk_employee") REFERENCES task_manager.t_employees("pk_id");
+
+ALTER TABLE task_manager.toc_emploees_projects ADD CONSTRAINT "toc_emploees_projects_fk0" FOREIGN KEY ("fk_progects") REFERENCES task_manager.t_projects("pk_id");
+ALTER TABLE task_manager.toc_emploees_projects ADD CONSTRAINT "toc_emploees_projects_fk1" FOREIGN KEY ("fk_employees") REFERENCES task_manager.t_employees("pk_id");
