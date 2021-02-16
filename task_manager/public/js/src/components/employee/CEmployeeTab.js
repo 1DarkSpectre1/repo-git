@@ -213,8 +213,7 @@ export class CEmployeeTab {
                     webix.message('Нельзя удалить сотрудника у которого есть задача')
                     return 
                  }
-                 
-                 this.window.parse(selected)
+                this.window.parse(selected)
                 this.window.switch(EMPLOYEE_WINDOW_TYPE.delete)
              })
         })
