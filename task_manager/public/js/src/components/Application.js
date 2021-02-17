@@ -97,7 +97,7 @@ export class Application {
                 this.employeeTab.attachEvents()
                 this.progectTab.attachEvents()
                 this.taskTab.attachEvents()
-
+				this.view.tabbar.select(MENU.progectsTab);
                // this.taskTab.setDatatableProgect(this.progectTab.view.datatable)
 
                 // переключение таба
@@ -109,7 +109,7 @@ export class Application {
                                 break;
                             case MENU.tasksTab:
                                 if (!this.progectTab.view.datatable.getSelectedItem()) {
-                                    $$(this.view.tabbar).select(MENU.progectsTab);
+                                    this.view.tabbar.select(MENU.progectsTab);
                                     webix.message("Выберите проект")
                                     return
                                 }
