@@ -15,7 +15,7 @@ export default function WorkedPlaceView(taskTab, employeeTab, progectTab, userIn
                      
                       id:"main-tabbar",
                       data: [
-                        {id:"ProgectTabView", value:"Проекты",icon: "mdi mdi-view-dashboard"},
+                            {id:"ProgectTabView", value:"Проекты",icon: "mdi mdi-view-dashboard"},
                             {id: "TaskTabView", value:"Задачи",icon: "mdi mdi-table"},
                             {id: "EmployeeTabView", value:"Сотрудники",icon:"mdi mdi-account"},
                         ],

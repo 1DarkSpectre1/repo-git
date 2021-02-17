@@ -65,11 +65,11 @@ export class CProgectTab {
                 deleteBtn: $$('progecttab-remove-btn'),
             }
         }
+
+        webix.extend(this.view.datatable, webix.ProgressBar);
         //обновление таблицы задач при изменении проекта
         this.view.datatable.attachEvent('onSelectChange', () => {
-            // var selected=this.getCurrentProgect()
             this.setCurrentProgect(this.getCurrentProgect())
-           // this.refreshTableTask()
         })
         // создание сотрудника
         this.view.btns.createBtn.attachEvent('onItemClick', () => {
@@ -112,6 +112,12 @@ export class CProgectTab {
          return this.view.datatable.getSelectedItem()
      }
     refreshTable() {
+        this.view.datatable.disable();
+        this.view.datatable.showProgress({
+            type:"top",
+          delay:10000,
+          hide:true
+        });
         progectModel.getProgects().then((progects) => {
             progects.forEach(progect => {
                 employeeModel.getEmployeeByID(progect.fk_employee).then((employee) => {
@@ -121,31 +127,12 @@ export class CProgectTab {
             });
             this.view.datatable.clearAll()
             this.view.datatable.parse(progects)
+            this.view.datatable.enable();
         })
         // }
     }
 
-    // switchControlls() {
-    //     switch (this.view.controlls.isVisible()) {
-    //         case true:
-    //             this.hidControlls()
-    //             break;
-    //         case false:
-    //             this.showControlls()
-    //             break;
-    //     }
-    // }
-
-    // // функция отображения элементов управления таба
-    // showControlls() {
-    //     this.view.controlls.show()
-    // }
-
-    // // функция сокрытия элементов управления таба
-    // hideControlls() {
-    //     this.view.controlls.hide()
-    // }
-    // // функция создания сотрудника
+     // функция создания сотрудника
     createProgect() {
         var newProgect = new Progect()
         newProgect.fk_employee = this.currentEmployee.id
@@ -168,14 +155,8 @@ export class CProgectTab {
             console.error('Incorrect ID of item:', selected.ID)
             return
         }
-        // employeeModel.getEmployeeByID(selected.ID).then((employee) => {
-        //     // проверка наличия данных
-        //     if (!employee) {
-        //         return
-        //     }
         this.window.parse(selected)
         this.window.switch(PROGECT_WINDOW_TYPE.update)
-        // })
     }
     handleContextMenu(item) {
         switch (item) {

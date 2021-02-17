@@ -3,5 +3,6 @@ import { Application } from './src/components/Application.js';
    let app = new Application();
    app.init()
    webix.ui(app.config())
+  
    app.attachEvents()
 })

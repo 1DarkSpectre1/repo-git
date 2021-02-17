@@ -81,7 +81,7 @@ export class CTaskTab {
             }
         }
         //console.log(this.view) 
-
+        webix.extend(this.view.datatable, webix.ProgressBar);
 
         this.view.datatable.attachEvent('onSelectChange', () => {
 
@@ -316,6 +316,12 @@ export class CTaskTab {
             webix.message('Не выбран проект','error')
             return
         } else {
+            this.view.datatable.disable();
+            this.view.datatable.showProgress({
+            type:"top",
+          delay:10000,
+          hide:true
+        });
             //console.log(this.view)
             this.view.btns.pauseBtn.hide()
             this.view.btns.playBtn.hide()
@@ -346,22 +352,11 @@ export class CTaskTab {
 
                 this.view.datatable.clearAll()
                 this.view.datatable.parse(tasks)
+                this.view.datatable.enable();
             })
         }
     }
 
-
-    // функция переключения оторбажения элементов управления таба
-    switchControlls() {
-        switch (this.view.controlls.isVisible()) {
-            case true:
-                this.hideControlls()
-                break;
-            case false:
-                this.showControlls()
-                break;
-        }
-    }
     showCompletedTasks() {
         var selected = $$('progectTabDatatable').getSelectedItem()
         // console.log(this.GetSelectProgect()) 
@@ -399,15 +394,6 @@ export class CTaskTab {
                 this.view.datatable.parse(tasks)
             })
         }
-    }
-    // функция отображения элементов управления таба
-    showControlls() {
-        this.view.controlls.show()
-    }
-
-    // функция сокрытия элементов управления таба
-    hideControlls() {
-        this.view.controlls.hide()
     }
     //функция просмотра задачи
     viewingTask() {

@@ -49,7 +49,7 @@ export class CEmployeeTab {
                 deleteBtn: $$('employeetab-remove-btn'),
             }
         }
-
+        webix.extend(this.view.datatable, webix.ProgressBar);
         // создание сотрудника
         this.view.btns.createBtn.attachEvent('onItemClick', () => {
             this.createEmployee()
@@ -97,69 +97,22 @@ export class CEmployeeTab {
 
     // функция обновления таблицы сотрудников
     refreshTable() {
-        // if (employees) {
-        //     this.view.datatable.clearAll()
-        //     this.view.datatable.parse(employees)
-        //     return
-       //  } else {
+        
+            this.view.datatable.disable();
+            this.view.datatable.showProgress({
+                type:"top",
+              delay:10000,
+              hide:true
+            });
             employeeModel.getEmployees().then((employees) => {
                 this.view.datatable.clearAll()
                 this.view.datatable.parse(employees)
+                this.view.datatable.enable();
             })
-       // }
+    
     }
 
-    // // метод отображения таба с фильтрацией по сотруднику
-    // showByEmployeeID(employeeID) {
-    //     employeeModel.getEmployeeByID(employeeID).then((employee) => {
-    //         // проверка наличия данных
-    //         if (!employee) {
-    //             return
-    //         }
-
-    //         // применение фильтров
-    //         this.view.datatable.getFilter('lastname').value = employee.lastname;
-    //         this.view.datatable.getFilter('firstname').value = employee.firstname;
-    //         this.view.datatable.getFilter('middlename').value = employee.middlename;
-    //         this.view.datatable.getFilter('position').value = employee.position;
-    //         this.view.datatable.getFilter('phoneNumber').value = employee.phoneNumber;
-    //         this.view.datatable.getFilter('email').value = employee.email;
-    //         this.view.datatable.filterByAll();
-
-    //         // выделение нужной строки
-    //         for (let rowID = 0; rowID < this.view.datatable.serialize().length; rowID++) {
-    //             let item = this.view.datatable.serialize()[rowID]
-
-    //             if (item.ID === employeeID) {
-    //                 this.view.datatable.select(item.id)
-    //                 break
-    //             }
-    //         }
-    //     })
-    // }
-
-    // функция переключения оторбажения элементов управления таба
-    switchControlls() {
-        switch (this.view.controlls.isVisible()) {
-            case true:
-                this.hideControlls()
-                break;
-            case false:
-                this.showControlls()
-                break;
-        }
-    }
-
-    // функция отображения элементов управления таба
-    showControlls() {
-        this.view.controlls.show()
-    }
-
-    // функция сокрытия элементов управления таба
-    hideControlls() {
-        this.view.controlls.hide()
-     }
-
+    
 
     // функция создания сотрудника
     createEmployee() {

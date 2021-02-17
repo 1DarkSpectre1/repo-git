@@ -68,7 +68,7 @@ export class Application {
     // метод отрисовки главной конфигурации представления
     config() {
         webix.ui(this.mainWindow.config())
-
+       
         return WorkedPlaceView(this.taskTab, this.employeeTab, this.progectTab, this.userInfo)
     }
 
@@ -97,13 +97,14 @@ export class Application {
                 this.employeeTab.attachEvents()
                 this.progectTab.attachEvents()
                 this.taskTab.attachEvents()
-				this.view.tabbar.select(MENU.progectsTab);
+                this.view.tabbar.select(MENU.progectsTab);
                // this.taskTab.setDatatableProgect(this.progectTab.view.datatable)
 
                 // переключение таба
                 this.view.tabbar.attachEvent('onAfterSelect', (id) => {
                         switch (id) {
                             case MENU.progectsTab:
+                              //  this.show_progress_bar()
                                 this.view.main.showBatch(id);
                                 this.view.tabControllsContainer.showBatch(id);
                                 break;
@@ -142,6 +143,16 @@ export class Application {
         this.view.workedPlace.hide()
         this.mainWindow.switch(this.view.workedPlace)
     }
+    show_progress_bar(){
+        this.view.workedPlace.disable();
+        this.view.workedPlace.showProgress({
+          type:"top",
+          hide:true
+        });
+        setTimeout(function(){
+            $$('workedPlace').enable();
+        }, 10000);
+      };
     // refreshSelectProgect() {
     //     var selected = this.progectTab.view.datatable.getSelectedItem()
     //     this.taskTab.refreshSelectProgect(selected)

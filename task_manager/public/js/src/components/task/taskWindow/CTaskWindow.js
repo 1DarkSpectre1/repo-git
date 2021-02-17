@@ -120,15 +120,6 @@ export class CTaskWindow {
                 this.view.windowLabel.setHTML('Редактирование задачи')
                 this.updateShow(status)
                 this.view.windowConfirmBtn.show()
-                // this.view.formfields.status.show()
-                // this.view.formfields.fact_hours.show()
-                // this.view.formfields.employee.show()
-                // this.view.formfields.name.enable()
-                // this.view.formfields.employee.enable()
-                // this.view.formfields.status.disable()
-                // this.view.formfields.sch_hours.enable()
-                // this.view.formfields.fact_hours.enable()
-                // this.view.window.resize()
                 break;
             case TASK_WINDOW_TYPE.delete:
                 this.view.windowLabel.setHTML('Удаление задачи')
@@ -257,7 +248,6 @@ export class CTaskWindow {
     }
     //обработка данных перед отправко1 на back
     updateTaskType(task) {
-        //console.log(task)
         switch (task.status) {
             case TASK_STATUS.new_task:
                 task.sch_hours = Number(task.sch_hours)
