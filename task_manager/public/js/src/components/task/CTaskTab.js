@@ -156,10 +156,11 @@ export class CTaskTab {
                 }
             }
         })
+        //просмотр задачи
         this.view.btns.viewingTask.attachEvent('onItemClick', () => {
             this.viewingTask()
         })
-        // Показ завершенных задачи
+        // возврат к текущим задачам
         this.view.btns.backTasksbtn.attachEvent('onItemClick', () => {
             this.refreshTable()
         })
@@ -316,13 +317,14 @@ export class CTaskTab {
             webix.message('Не выбран проект','error')
             return
         } else {
+            //запрещаем действия с таблицей пока не получены данные
             this.view.datatable.disable();
             this.view.datatable.showProgress({
             type:"top",
           delay:10000,
           hide:true
         });
-            //console.log(this.view)
+        //обновление видимости кнопок
             this.view.btns.pauseBtn.hide()
             this.view.btns.playBtn.hide()
             this.view.btns.finishbtn.hide()
@@ -339,10 +341,8 @@ export class CTaskTab {
                 // заполнение таблицы окна данными задачи
                 if (tasks) {
                     tasks.forEach(task => {
-                        // console.log(selected.ID)
                         task.fk_progect = this.selectProgect.ID
                         task.id = task.ID
-                        //console.log(task)
                         employeeModel.getEmployeeByID(task.fk_employee).then((employee) => {
                             task.employee = `${employee.lastname} ${employee.firstname}`
                             this.view.datatable.refresh()
@@ -358,8 +358,7 @@ export class CTaskTab {
     }
 
     showCompletedTasks() {
-        var selected = $$('progectTabDatatable').getSelectedItem()
-        // console.log(this.GetSelectProgect()) 
+        var selected = this.selectProgect
         if (!selected) {
             console.log('Не выбран проект')
             return
@@ -379,10 +378,8 @@ export class CTaskTab {
                 // заполнение таблицы окна данными задачи
                 if (tasks) {
                     tasks.forEach(task => {
-                        // console.log(selected.ID)
                         task.fk_progect = selected.ID
                         task.id = task.ID
-                        //console.log(task)
                         employeeModel.getEmployeeByID(task.fk_employee).then((employee) => {
                             task.employee = `${employee.lastname} ${employee.firstname}`
                             this.view.datatable.refresh()
@@ -408,7 +405,6 @@ export class CTaskTab {
             console.error('id of item is ', selected.ID)
             return
         }
-        //selected.employee=selected.fk_employee
         // заполнение полей окна данными задачи
         this.window.parse(selected)
         this.window.switch(TASK_WINDOW_TYPE.viewing)
@@ -512,8 +508,6 @@ export class CTaskTab {
             }
 
             // заполнение полей окна данными задачи
-
-            //  selected.employee=selected.fk_employee
             this.window.parse(selected)
             this.window.switch(TASK_WINDOW_TYPE.update, selected.status)
         })

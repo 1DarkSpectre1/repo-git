@@ -108,9 +108,11 @@ export class CProgectTab {
             this.currentEmployee = emp
         })
     }
+    // получение текущего  выбранного проекта
      getCurrentProgect(){
          return this.view.datatable.getSelectedItem()
      }
+    //обновление таблицы проектов
     refreshTable() {
         this.view.datatable.disable();
         this.view.datatable.showProgress({
@@ -158,6 +160,7 @@ export class CProgectTab {
         this.window.parse(selected)
         this.window.switch(PROGECT_WINDOW_TYPE.update)
     }
+    //выбор в контекстном меню
     handleContextMenu(item) {
         switch (item) {
             case PROGECT_CONTEXT_MENU.edit: // редактирование проекта

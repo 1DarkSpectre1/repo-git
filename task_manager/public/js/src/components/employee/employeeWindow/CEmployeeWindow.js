@@ -8,7 +8,7 @@ export class CEmployeeWindow {
         this.view       // объект для быстрого доступа к представлениям
         this.type       // тип текущего отображения окна
         this.onChange   // callback функция при CUD операциях над сотрудником
-        this.onChangeEmployees
+        this.onChangeEmployees // callback функция при опрерациях над сотрудниками
     }
 
     // метод инициализации компонента

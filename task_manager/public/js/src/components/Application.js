@@ -37,14 +37,13 @@ export class Application {
             () => {
                 deleteCookie('auth-token')
                 location.replace('/user/logout')
-            }, // onLogout
+            }, 
         )
 
         // инициализация компонента вкладки событий
         this.progectTab.init( 
         (selected)=>{
             this.taskTab.refreshSelectProgect(selected)
-           //this.refreshSelectProgect()
         },
         )
         // инициализация компонента вкладки книг
@@ -58,11 +57,10 @@ export class Application {
 
 
         // инициализация компонента окна входа в приложение
-        //    this.mainWindow.init(false)
         this.mainWindow.init(
             () => {
                 location.replace('/')
-            }, // onLogin
+            }, 
         )
     }
     // метод отрисовки главной конфигурации представления
@@ -98,7 +96,7 @@ export class Application {
                 this.progectTab.attachEvents()
                 this.taskTab.attachEvents()
                 this.view.tabbar.select(MENU.progectsTab);
-               // this.taskTab.setDatatableProgect(this.progectTab.view.datatable)
+
 
                 // переключение таба
                 this.view.tabbar.attachEvent('onAfterSelect', (id) => {
@@ -141,22 +139,8 @@ export class Application {
 
         // первоночальное состояние приложения
         this.view.workedPlace.hide()
-        this.mainWindow.switch(this.view.workedPlace)
+        this.mainWindow.switch()
     }
-    show_progress_bar(){
-        this.view.workedPlace.disable();
-        this.view.workedPlace.showProgress({
-          type:"top",
-          hide:true
-        });
-        setTimeout(function(){
-            $$('workedPlace').enable();
-        }, 10000);
-      };
-    // refreshSelectProgect() {
-    //     var selected = this.progectTab.view.datatable.getSelectedItem()
-    //     this.taskTab.refreshSelectProgect(selected)
-    // }
 }
 export const MENU = {
     progectsTab: "ProgectTabView",
